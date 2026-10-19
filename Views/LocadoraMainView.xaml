@@ -213,7 +213,167 @@
                 </Grid>
             </VerticalStackLayout>
 
-            <!-- 3. CALENDÁRIO DE DEVOLUÇÕES DA UNIDADE (14 DIAS) -->
+            <!-- 3. RETIRADAS PENDENTES DE VALIDAÇÃO (PIN DE 6 DÍGITOS) -->
+            <Border Stroke="#BAE6FD"
+                    StrokeThickness="1.5"
+                    BackgroundColor="#FFFFFF"
+                    StrokeShape="RoundRectangle 16"
+                    Padding="16">
+                <VerticalStackLayout Spacing="14">
+                    <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                        <HorizontalStackLayout Grid.Column="0" Spacing="8" VerticalOptions="Center">
+                            <Label Text="&#xf023;"
+                                   FontFamily="FontAwesomeSolid"
+                                   FontSize="16"
+                                   TextColor="#0284C7"
+                                   VerticalOptions="Center" />
+                            <Label Text="Validação de Retiradas Pendentes"
+                                   FontSize="16"
+                                   FontAttributes="Bold"
+                                   TextColor="#0F172A" />
+                            <Border BackgroundColor="#E0F2FE"
+                                    StrokeShape="RoundRectangle 6"
+                                    Padding="8,2"
+                                    VerticalOptions="Center">
+                                <Label Text="{Binding LocacoesPendentesCount, StringFormat='{0} pendente(s)'}"
+                                       FontSize="11"
+                                       FontAttributes="Bold"
+                                       TextColor="#0369A1" />
+                            </Border>
+                        </HorizontalStackLayout>
+                    </Grid>
+
+                    <Label Text="Digite o código PIN de 6 dígitos informado pelo cliente no balcão para liberar a retirada do console:"
+                           FontSize="11"
+                           TextColor="#64748B" />
+
+                    <!-- Lista de Locações Aguardando Retirada -->
+                    <CollectionView ItemsSource="{Binding LocacoesPendentesRetirada}">
+                        <CollectionView.EmptyView>
+                            <Border Stroke="#E2E8F0"
+                                    StrokeThickness="1"
+                                    BackgroundColor="#F8FAFC"
+                                    StrokeShape="RoundRectangle 10"
+                                    Padding="14">
+                                <Label Text="Nenhuma locação aguardando retirada nesta filial no momento."
+                                       FontSize="12"
+                                       TextColor="#64748B"
+                                       HorizontalTextAlignment="Center" />
+                            </Border>
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Locacao">
+                                <Border Stroke="#E2E8F0"
+                                        StrokeThickness="1"
+                                        BackgroundColor="#FFFFFF"
+                                        StrokeShape="RoundRectangle 12"
+                                        Padding="14"
+                                        Margin="0,0,0,10">
+                                    <VerticalStackLayout Spacing="10">
+                                        <!-- Topo do Card: Console e Status -->
+                                        <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                                            <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                                <Label Text="{Binding ItemNome}"
+                                                       FontSize="14"
+                                                       FontAttributes="Bold"
+                                                       TextColor="#0F172A" />
+                                                <HorizontalStackLayout Spacing="6">
+                                                    <Label Text="{Binding ChaveSerialConsole, StringFormat='Serial: {0}'}"
+                                                           FontSize="11"
+                                                           TextColor="#64748B" />
+                                                    <Label Text="•" TextColor="#CBD5E1" />
+                                                    <Label Text="{Binding ModalidadeAluguel, StringFormat='Plano: {0}'}"
+                                                           FontSize="11"
+                                                           TextColor="#64748B" />
+                                                    <Label Text="•" TextColor="#CBD5E1" />
+                                                    <Label Text="{Binding ValorTotalFormatado}"
+                                                           FontSize="11"
+                                                           FontAttributes="Bold"
+                                                           TextColor="#16A34A" />
+                                                </HorizontalStackLayout>
+                                            </VerticalStackLayout>
+
+                                            <!-- Badge de Aguardando Retirada -->
+                                            <Border Grid.Column="1"
+                                                    BackgroundColor="{Binding StatusBadgeBg}"
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 6"
+                                                    Padding="8,3">
+                                                <Label Text="{Binding StatusTexto}"
+                                                       FontSize="10"
+                                                       FontAttributes="Bold"
+                                                       TextColor="{Binding StatusBadgeText}" />
+                                            </Border>
+                                        </Grid>
+
+                                        <!-- Informações do Cliente e Data da Reserva -->
+                                        <Border BackgroundColor="#F8FAFC"
+                                                StrokeThickness="0"
+                                                StrokeShape="RoundRectangle 8"
+                                                Padding="10,8">
+                                            <Grid ColumnDefinitions="*, *" RowSpacing="2">
+                                                <VerticalStackLayout Grid.Column="0" Spacing="1">
+                                                    <Label Text="CLIENTE"
+                                                           FontSize="9"
+                                                           FontAttributes="Bold"
+                                                           TextColor="#94A3B8" />
+                                                    <Label Text="{Binding UsuarioNome}"
+                                                           FontSize="12"
+                                                           FontAttributes="Bold"
+                                                           TextColor="#0F172A" />
+                                                </VerticalStackLayout>
+                                                <VerticalStackLayout Grid.Column="1" Spacing="1">
+                                                    <Label Text="RESERVADO EM"
+                                                           FontSize="9"
+                                                           FontAttributes="Bold"
+                                                           TextColor="#94A3B8" />
+                                                    <Label Text="{Binding DataLocacaoFormatada}"
+                                                           FontSize="11"
+                                                           TextColor="#64748B" />
+                                                </VerticalStackLayout>
+                                            </Grid>
+                                        </Border>
+
+                                        <!-- Campo de Entrada do PIN de 6 Dígitos e Botão Validar -->
+                                        <Grid ColumnDefinitions="*, Auto" ColumnSpacing="10" VerticalOptions="Center">
+                                            <Border Grid.Column="0"
+                                                    Stroke="#CBD5E1"
+                                                    StrokeThickness="1"
+                                                    BackgroundColor="#FFFFFF"
+                                                    StrokeShape="RoundRectangle 8"
+                                                    Padding="10,0">
+                                                <Entry Text="{Binding CodigoDigitado}"
+                                                       Placeholder="PIN de 6 dígitos"
+                                                       MaxLength="6"
+                                                       Keyboard="Numeric"
+                                                       FontSize="14"
+                                                       FontAttributes="Bold"
+                                                       TextColor="#0F172A"
+                                                       HorizontalTextAlignment="Center"
+                                                       VerticalOptions="Center" />
+                                            </Border>
+
+                                            <Button Grid.Column="1"
+                                                    Text="Confirmar Retirada"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ItemViewModel}}, Path=ValidarCodigoRetiradaCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    BackgroundColor="#16A34A"
+                                                    TextColor="#FFFFFF"
+                                                    FontAttributes="Bold"
+                                                    FontSize="12"
+                                                    CornerRadius="8"
+                                                    HeightRequest="42"
+                                                    Padding="14,0" />
+                                        </Grid>
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- 4. CALENDÁRIO DE DEVOLUÇÕES DA UNIDADE (14 DIAS) -->
             <Border Stroke="#E2E8F0"
                     StrokeThickness="1"
                     BackgroundColor="#FFFFFF"
@@ -461,6 +621,260 @@
                                                     HeightRequest="32"
                                                     Padding="10,0" />
                                         </HorizontalStackLayout>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- 5. GESTÃO DE SERVIÇOS OPCIONAIS DA UNIDADE -->
+            <Border Stroke="#E2E8F0"
+                    StrokeThickness="1"
+                    BackgroundColor="#FFFFFF"
+                    StrokeShape="RoundRectangle 16"
+                    Padding="16">
+                <VerticalStackLayout Spacing="14">
+                    <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                        <HorizontalStackLayout Grid.Column="0" Spacing="8" VerticalOptions="Center">
+                            <Label Text="&#xf7a9;"
+                                   FontFamily="FontAwesomeSolid"
+                                   FontSize="16"
+                                   TextColor="#7E22CE"
+                                   VerticalOptions="Center" />
+                            <Label Text="Serviços Opcionais da Unidade"
+                                   FontSize="16"
+                                   FontAttributes="Bold"
+                                   TextColor="#0F172A" />
+                            <Border BackgroundColor="#F3E8FF"
+                                    StrokeShape="RoundRectangle 6"
+                                    Padding="8,2"
+                                    VerticalOptions="Center">
+                                <Label Text="{Binding ServicosOpcionaisCount, StringFormat='{0} cadastrado(s)'}"
+                                       FontSize="11"
+                                       FontAttributes="Bold"
+                                       TextColor="#7E22CE" />
+                            </Border>
+                        </HorizontalStackLayout>
+
+                        <!-- Botão Adicionar Serviço -->
+                        <Button Grid.Column="1"
+                                Text="+ Novo Serviço"
+                                Command="{Binding AbrirFormularioNovoServicoCommand}"
+                                BackgroundColor="#FAF5FF"
+                                TextColor="#7E22CE"
+                                BorderColor="#E9D5FF"
+                                BorderWidth="1"
+                                FontAttributes="Bold"
+                                FontSize="11"
+                                CornerRadius="8"
+                                HeightRequest="34" />
+                    </Grid>
+
+                    <Label Text="Cadastre acessórios extras, periféricos ou serviços adicionais (ex: controles, headsets, seguros) que aparecerão no checkout de aluguel desta locadora:"
+                           FontSize="11"
+                           TextColor="#64748B" />
+
+                    <!-- FORMULÁRIO COLAPSÁVEL DE NOVO SERVIÇO -->
+                    <Border IsVisible="{Binding IsFormularioNovoServicoVisivel}"
+                            Stroke="#D8B4FE"
+                            StrokeThickness="1.5"
+                            BackgroundColor="#FAF5FF"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="14">
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="Cadastrar Novo Serviço ou Acessório"
+                                   FontSize="13"
+                                   FontAttributes="Bold"
+                                   TextColor="#6B21A8" />
+
+                            <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, 120" RowSpacing="8" ColumnSpacing="10">
+                                <!-- Nome do Serviço -->
+                                <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="3">
+                                    <Label Text="Nome do Serviço / Acessório *"
+                                           FontSize="11"
+                                           FontAttributes="Bold"
+                                           TextColor="#475569" />
+                                    <Border Stroke="#CBD5E1"
+                                            StrokeThickness="1"
+                                            BackgroundColor="#FFFFFF"
+                                            StrokeShape="RoundRectangle 8"
+                                            Padding="10,0">
+                                        <Entry Text="{Binding NovoServicoNome}"
+                                               Placeholder="Ex: Controle Extra DualSense"
+                                               FontSize="12"
+                                               TextColor="#0F172A"
+                                               HeightRequest="38" />
+                                    </Border>
+                                </VerticalStackLayout>
+
+                                <!-- Valor do Serviço -->
+                                <VerticalStackLayout Grid.Row="0" Grid.Column="1" Spacing="3">
+                                    <Label Text="Valor (R$) *"
+                                           FontSize="11"
+                                           FontAttributes="Bold"
+                                           TextColor="#475569" />
+                                    <Border Stroke="#CBD5E1"
+                                            StrokeThickness="1"
+                                            BackgroundColor="#FFFFFF"
+                                            StrokeShape="RoundRectangle 8"
+                                            Padding="10,0">
+                                        <Entry Text="{Binding NovoServicoValorTexto}"
+                                               Placeholder="25,00"
+                                               Keyboard="Numeric"
+                                               FontSize="12"
+                                               TextColor="#0F172A"
+                                               HeightRequest="38" />
+                                    </Border>
+                                </VerticalStackLayout>
+
+                                <!-- Descrição do Serviço -->
+                                <VerticalStackLayout Grid.Row="1" Grid.ColumnSpan="2" Spacing="3">
+                                    <Label Text="Descrição / Benefício"
+                                           FontSize="11"
+                                           FontAttributes="Bold"
+                                           TextColor="#475569" />
+                                    <Border Stroke="#CBD5E1"
+                                            StrokeThickness="1"
+                                            BackgroundColor="#FFFFFF"
+                                            StrokeShape="RoundRectangle 8"
+                                            Padding="10,0">
+                                        <Entry Text="{Binding NovoServicoDescricao}"
+                                               Placeholder="Ex: Controle adicional original para multiplayer"
+                                               FontSize="12"
+                                               TextColor="#0F172A"
+                                               HeightRequest="38" />
+                                    </Border>
+                                </VerticalStackLayout>
+                            </Grid>
+
+                            <!-- Botões de Ação do Formulário -->
+                            <HorizontalStackLayout Spacing="8" HorizontalOptions="End" Margin="0,4,0,0">
+                                <Button Text="Cancelar"
+                                        Command="{Binding FecharFormularioNovoServicoCommand}"
+                                        BackgroundColor="#FFFFFF"
+                                        TextColor="#64748B"
+                                        BorderColor="#CBD5E1"
+                                        BorderWidth="1"
+                                        FontSize="11"
+                                        FontAttributes="Bold"
+                                        CornerRadius="6"
+                                        HeightRequest="34"
+                                        Padding="12,0" />
+
+                                <Button Text="Salvar Serviço"
+                                        Command="{Binding SalvarNovoServicoOpcionalCommand}"
+                                        BackgroundColor="#7E22CE"
+                                        TextColor="#FFFFFF"
+                                        FontSize="11"
+                                        FontAttributes="Bold"
+                                        CornerRadius="6"
+                                        HeightRequest="34"
+                                        Padding="14,0" />
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- LISTA DE SERVIÇOS OPCIONAIS CADASTRADOS NA UNIDADE -->
+                    <CollectionView ItemsSource="{Binding ServicosOpcionaisDaUnidade}">
+                        <CollectionView.EmptyView>
+                            <Border Stroke="#E2E8F0"
+                                    StrokeThickness="1"
+                                    BackgroundColor="#F8FAFC"
+                                    StrokeShape="RoundRectangle 10"
+                                    Padding="16">
+                                <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                    <Label Text="Nenhum serviço adicional cadastrado nesta unidade."
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           TextColor="#64748B"
+                                           HorizontalTextAlignment="Center" />
+                                    <Label Text="Clique em '+ Novo Serviço' para disponibilizar opcionais para seus clientes."
+                                           FontSize="11"
+                                           TextColor="#94A3B8"
+                                           HorizontalTextAlignment="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:ServicoOpcional">
+                                <Border Stroke="#E2E8F0"
+                                        StrokeThickness="1"
+                                        BackgroundColor="#FFFFFF"
+                                        StrokeShape="RoundRectangle 12"
+                                        Padding="12"
+                                        Margin="0,0,0,8">
+                                    <Grid ColumnDefinitions="Auto, *, Auto, Auto" ColumnSpacing="10" VerticalOptions="Center">
+                                        <!-- Ícone do Serviço -->
+                                        <Border Grid.Column="0"
+                                                WidthRequest="38"
+                                                HeightRequest="38"
+                                                StrokeThickness="0"
+                                                StrokeShape="RoundRectangle 8"
+                                                BackgroundColor="#F3E8FF"
+                                                VerticalOptions="Center">
+                                            <Label Text="{Binding IconeGlyph}"
+                                                   FontFamily="FontAwesomeSolid"
+                                                   FontSize="16"
+                                                   TextColor="#7E22CE"
+                                                   HorizontalOptions="Center"
+                                                   VerticalOptions="Center" />
+                                        </Border>
+
+                                        <!-- Informações do Serviço -->
+                                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                                                <Label Text="{Binding Nome}"
+                                                       FontSize="13"
+                                                       FontAttributes="Bold"
+                                                       TextColor="#0F172A" />
+                                                <Label Text="{Binding ValorFormatado, StringFormat='(+{0})'}"
+                                                       FontSize="12"
+                                                       FontAttributes="Bold"
+                                                       TextColor="#16A34A" />
+                                            </HorizontalStackLayout>
+                                            <Label Text="{Binding Descricao}"
+                                                   FontSize="11"
+                                                   TextColor="#64748B" />
+                                        </VerticalStackLayout>
+
+                                        <!-- Badge Status (Ativo / Pausado) com Toggle -->
+                                        <Border Grid.Column="2"
+                                                BackgroundColor="{Binding StatusBadgeBg}"
+                                                StrokeThickness="0"
+                                                StrokeShape="RoundRectangle 6"
+                                                Padding="8,4"
+                                                VerticalOptions="Center">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ItemViewModel}}, Path=AlternarAtivoServicoOpcionalCommand}"
+                                                                      CommandParameter="{Binding .}" />
+                                            </Border.GestureRecognizers>
+                                            <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
+                                                <Label Text="{Binding StatusTexto}"
+                                                       FontSize="10"
+                                                       FontAttributes="Bold"
+                                                       TextColor="{Binding StatusCor}" />
+                                                <Label Text="&#xf021;"
+                                                       FontFamily="FontAwesomeSolid"
+                                                       FontSize="9"
+                                                       TextColor="{Binding StatusCor}" />
+                                            </HorizontalStackLayout>
+                                        </Border>
+
+                                        <!-- Botão Excluir -->
+                                        <Button Grid.Column="3"
+                                                Text="&#xf2ed;"
+                                                FontFamily="FontAwesomeSolid"
+                                                FontSize="13"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ItemViewModel}}, Path=ExcluirServicoOpcionalCommand}"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="#FEE2E2"
+                                                TextColor="#DC2626"
+                                                CornerRadius="6"
+                                                WidthRequest="34"
+                                                HeightRequest="34"
+                                                Padding="0" />
                                     </Grid>
                                 </Border>
                             </DataTemplate>

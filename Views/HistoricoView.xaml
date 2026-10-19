@@ -173,6 +173,44 @@
                                 </VerticalStackLayout>
                             </Grid>
 
+                            <!-- PIN de Confirmação para Retirada (exibido na tela do cliente quando gerado) -->
+                            <Border BackgroundColor="#FEF3C7"
+                                    Stroke="#FDE68A"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 8"
+                                    Padding="12,8"
+                                    IsVisible="{Binding TemCodigoConfirmacao}">
+                                <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10" VerticalOptions="Center">
+                                    <Label Grid.Column="0"
+                                           Text="&#xf023;"
+                                           FontFamily="FontAwesomeSolid"
+                                           FontSize="16"
+                                           TextColor="#B45309"
+                                           VerticalOptions="Center" />
+                                    <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
+                                        <Label Text="PIN DE CONFIRMAÇÃO DA RETIRADA"
+                                               FontSize="10"
+                                               FontAttributes="Bold"
+                                               TextColor="#B45309" />
+                                        <Label Text="Apresente este código de 6 dígitos no balcão da filial"
+                                               FontSize="10"
+                                               TextColor="#92400E" />
+                                    </VerticalStackLayout>
+                                    <Border Grid.Column="2"
+                                            BackgroundColor="#FFFFFF"
+                                            Stroke="#FDE68A"
+                                            StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 6"
+                                            Padding="10,4">
+                                        <Label Text="{Binding CodigoConfirmacao}"
+                                               FontSize="16"
+                                               FontAttributes="Bold"
+                                               TextColor="#B45309"
+                                               VerticalOptions="Center" />
+                                    </Border>
+                                </Grid>
+                            </Border>
+
                             <BoxView HeightRequest="1" Color="#F1F5F9" />
 
                             <!-- Rodapé Financeiro do Pedido -->

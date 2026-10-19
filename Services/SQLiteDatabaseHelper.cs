@@ -2,6 +2,7 @@ using SQLite;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using ProjetoFinalMVVM.Models;
 
@@ -39,6 +40,8 @@ namespace ProjetoFinalMVVM.Services
             await _banco.CreateTableAsync<Locadora>();
             await _banco.CreateTableAsync<Item>();
             await _banco.CreateTableAsync<Historico>();
+            await _banco.CreateTableAsync<Locacao>();
+            await _banco.CreateTableAsync<ServicoOpcional>();
 
             // Executa o Seed inicial de dados para a primeira execução
             await PopularDadosIniciaisAsync();
@@ -290,6 +293,151 @@ namespace ProjetoFinalMVVM.Services
 
                 await _banco.InsertAllAsync(historicoInicial);
             }
+
+            // 5. Seed de Locação inicial em 'Aguardando Retirada' com código PIN de 6 dígitos para teste da locadora
+            var locacoesExistentes = await _banco.Table<Locacao>().CountAsync();
+            if (locacoesExistentes == 0)
+            {
+                var locacaoInicial = new Locacao
+                {
+                    UsuarioId = 2,
+                    UsuarioNome = "Lucas Aluno",
+                    ItemId = 1,
+                    ItemNome = "Xbox 360",
+                    ChaveSerialConsole = "XB360-9842-BR",
+                    LocadoraId = 1,
+                    LocadoraNome = "GameZone Express - Centro",
+                    DataLocacao = DateTime.Now,
+                    DataDevolucaoPrevista = DateTime.Today.AddDays(3),
+                    CodigoConfirmacao = "849201",
+                    StatusLocacao = StatusLocacaoEnum.AguardandoRetirada,
+                    ValorTotal = 105.00m,
+                    TaxaAdicional = 0m,
+                    ModalidadeAluguel = "Diária",
+                    QuantidadePeriodo = 3,
+                    DiasLocados = 3,
+                    FormaEntrega = "Retirada no Balcão",
+                    DescricaoExtras = "Nenhum adicional selecionado"
+                };
+
+                await _banco.InsertAsync(locacaoInicial);
+            }
+
+            // 6. Seed de Serviços Opcionais vinculados às Locadoras
+            var servicosExistentes = await _banco.Table<ServicoOpcional>().CountAsync();
+            if (servicosExistentes == 0)
+            {
+                var servicosIniciais = new List<ServicoOpcional>
+                {
+                    // Serviços da GameZone Express - Centro
+                    new ServicoOpcional
+                    {
+                        LocadoraId = 1,
+                        LocadoraNome = "GameZone Express - Centro",
+                        Nome = "Controle Extra Sem Fio",
+                        Descricao = "Controle adicional original para partidas multiplayer local",
+                        IconeGlyph = "\uf11b",
+                        Valor = 15.00m,
+                        Ativo = true
+                    },
+                    new ServicoOpcional
+                    {
+                        LocadoraId = 1,
+                        LocadoraNome = "GameZone Express - Centro",
+                        Nome = "Headset Gamer Pro",
+                        Descricao = "Headset com microfone de alta fidelidade e áudio espacial",
+                        IconeGlyph = "\uf025",
+                        Valor = 12.00m,
+                        Ativo = true
+                    },
+                    new ServicoOpcional
+                    {
+                        LocadoraId = 1,
+                        LocadoraNome = "GameZone Express - Centro",
+                        Nome = "Pacote 2 Jogos Físicos Extras",
+                        Descricao = "Escolha 2 títulos em mídia física do acervo na retirada",
+                        IconeGlyph = "\uf02d",
+                        Valor = 20.00m,
+                        Ativo = true
+                    },
+                    new ServicoOpcional
+                    {
+                        LocadoraId = 1,
+                        LocadoraNome = "GameZone Express - Centro",
+                        Nome = "Seguro Proteção Acidental Total",
+                        Descricao = "Cobertura integral contra quedas e isenção de franquia",
+                        IconeGlyph = "\uf3ed",
+                        Valor = 25.00m,
+                        Ativo = true
+                    },
+
+                    // Serviços da Pixel Play Retro & NextGen
+                    new ServicoOpcional
+                    {
+                        LocadoraId = 2,
+                        LocadoraNome = "Pixel Play Retro & NextGen",
+                        Nome = "Controle Arcade Fight Stick",
+                        Descricao = "Controle estilo fliperama clássico com botões Sanwa",
+                        IconeGlyph = "\uf11b",
+                        Valor = 30.00m,
+                        Ativo = true
+                    },
+                    new ServicoOpcional
+                    {
+                        LocadoraId = 2,
+                        LocadoraNome = "Pixel Play Retro & NextGen",
+                        Nome = "Cabo HDMI 2.1 Ultra High Speed 4K",
+                        Descricao = "Cabo blindado de 3 metros com suporte a 120Hz e HDR",
+                        IconeGlyph = "\uf0c1",
+                        Valor = 10.00m,
+                        Ativo = true
+                    },
+                    new ServicoOpcional
+                    {
+                        LocadoraId = 2,
+                        LocadoraNome = "Pixel Play Retro & NextGen",
+                        Nome = "Seguro Especial Quedas",
+                        Descricao = "Proteção básica contra riscos e avarias no transporte",
+                        IconeGlyph = "\uf3ed",
+                        Valor = 20.00m,
+                        Ativo = true
+                    },
+
+                    // Serviços da Arena Gamer Pro - Zona Sul
+                    new ServicoOpcional
+                    {
+                        LocadoraId = 3,
+                        LocadoraNome = "Arena Gamer Pro - Zona Sul",
+                        Nome = "Controle Pro Wireless Elite / DualSense Edge",
+                        Descricao = "Controle nível e-sports com paddles e gatilhos ajustáveis",
+                        IconeGlyph = "\uf11b",
+                        Valor = 35.00m,
+                        Ativo = true
+                    },
+                    new ServicoOpcional
+                    {
+                        LocadoraId = 3,
+                        LocadoraNome = "Arena Gamer Pro - Zona Sul",
+                        Nome = "Headset Sem Fio Wireless 7.1",
+                        Descricao = "Headset wireless com cancelamento de ruído e 16h de bateria",
+                        IconeGlyph = "\uf025",
+                        Valor = 25.00m,
+                        Ativo = true
+                    },
+                    new ServicoOpcional
+                    {
+                        LocadoraId = 3,
+                        LocadoraNome = "Arena Gamer Pro - Zona Sul",
+                        Nome = "Seguro Blindagem Gamer VIP",
+                        Descricao = "Substituição imediata em caso de qualquer imprevisto",
+                        IconeGlyph = "\uf3ed",
+                        Valor = 35.00m,
+                        Ativo = true
+                    }
+                };
+
+                await _banco.InsertAllAsync(servicosIniciais);
+            }
         }
 
         // ==========================================
@@ -470,6 +618,185 @@ namespace ProjetoFinalMVVM.Services
                                      .Where(h => h.LocadoraNome == locadoraNome)
                                      .ToListAsync();
             return todos.FindAll(h => h.DataDevolucaoPrevista.Date == data.Date && h.StatusLocacao == "Em Andamento");
+        }
+
+        // ==========================================
+        // MÉTODOS CRUD E LOGÍSTICA: LOCAÇÕES & PIN
+        // ==========================================
+
+        /// <summary>
+        /// Salva uma nova locação no SQLite. Caso o código de confirmação de 6 dígitos
+        /// ainda não tenha sido gerado, gera um PIN criptograficamente seguro entre 100000 e 999999.
+        /// </summary>
+        public async Task<int> SalvarLocacaoAsync(Locacao locacao)
+        {
+            await InicializarAsync();
+
+            if (string.IsNullOrWhiteSpace(locacao.CodigoConfirmacao))
+            {
+                locacao.CodigoConfirmacao = RandomNumberGenerator.GetInt32(100000, 1000000).ToString();
+            }
+
+            if (locacao.Id != 0)
+            {
+                return await _banco!.UpdateAsync(locacao);
+            }
+
+            return await _banco!.InsertAsync(locacao);
+        }
+
+        public async Task<List<Locacao>> ObterLocacoesAsync()
+        {
+            await InicializarAsync();
+            return await _banco!.Table<Locacao>()
+                                .OrderByDescending(l => l.DataLocacao)
+                                .ToListAsync();
+        }
+
+        public async Task<List<Locacao>> ObterLocacoesPorLocadoraAsync(string locadoraNome)
+        {
+            await InicializarAsync();
+            return await _banco!.Table<Locacao>()
+                                .Where(l => l.LocadoraNome == locadoraNome)
+                                .OrderByDescending(l => l.DataLocacao)
+                                .ToListAsync();
+        }
+
+        /// <summary>
+        /// Busca locações filtrando por status (ex: AguardandoRetirada) e opcionalmente por nome da locadora/filial.
+        /// </summary>
+        public async Task<List<Locacao>> ObterLocacoesPorStatusAsync(StatusLocacaoEnum status, string? locadoraNome = null)
+        {
+            await InicializarAsync();
+
+            var query = _banco!.Table<Locacao>().Where(l => l.StatusLocacao == status);
+
+            if (!string.IsNullOrWhiteSpace(locadoraNome))
+            {
+                query = query.Where(l => l.LocadoraNome == locadoraNome);
+            }
+
+            return await query.OrderByDescending(l => l.DataLocacao).ToListAsync();
+        }
+
+        public async Task<Locacao?> ObterLocacaoPorIdAsync(int id)
+        {
+            await InicializarAsync();
+            return await _banco!.Table<Locacao>()
+                                .Where(l => l.Id == id)
+                                .FirstOrDefaultAsync();
+        }
+
+        /// <summary>
+        /// Valida o PIN de 6 dígitos fornecido pelo cliente no momento da retirada.
+        /// Se o código for idêntico e a locação estiver com status AguardandoRetirada:
+        /// - Transiciona a locação para StatusLocacaoEnum.Alugado
+        /// - Atualiza o status do console para 'Alugado'
+        /// - Sincroniza o registro correspondente no Histórico
+        /// - Retorna true em caso de sucesso e false se for incorreto ou inválido.
+        /// </summary>
+        public async Task<bool> ValidarCodigoRetiradaAsync(int locacaoId, string codigoDigitado)
+        {
+            await InicializarAsync();
+
+            if (string.IsNullOrWhiteSpace(codigoDigitado))
+                return false;
+
+            var locacao = await _banco!.Table<Locacao>()
+                                       .Where(l => l.Id == locacaoId)
+                                       .FirstOrDefaultAsync();
+
+            if (locacao == null)
+                return false;
+
+            // Validação estrita: status deve ser AguardandoRetirada e PIN de 6 dígitos idêntico
+            if (locacao.StatusLocacao == StatusLocacaoEnum.AguardandoRetirada &&
+                string.Equals(locacao.CodigoConfirmacao?.Trim(), codigoDigitado.Trim(), StringComparison.OrdinalIgnoreCase))
+            {
+                // 1. Atualiza o status da locação para Alugado
+                locacao.StatusLocacao = StatusLocacaoEnum.Alugado;
+                await _banco.UpdateAsync(locacao);
+
+                // 2. Atualiza o console/item físico para "Alugado"
+                var console = await _banco.Table<Item>().Where(i => i.Id == locacao.ItemId).FirstOrDefaultAsync();
+                if (console != null)
+                {
+                    console.Status = "Alugado";
+                    await _banco.UpdateAsync(console);
+                }
+
+                // 3. Sincroniza o status no Histórico para acompanhamento no Dashboard e Calendário
+                var historico = await _banco.Table<Historico>()
+                                            .Where(h => h.ItemId == locacao.ItemId && h.UsuarioId == locacao.UsuarioId)
+                                            .OrderByDescending(h => h.DataHora)
+                                            .FirstOrDefaultAsync();
+
+                if (historico != null)
+                {
+                    historico.StatusLocacao = "Em Andamento";
+                    await _banco.UpdateAsync(historico);
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        // ==========================================
+        // MÉTODOS CRUD: SERVIÇOS OPCIONAIS DA LOCADORA
+        // ==========================================
+
+        public async Task<List<ServicoOpcional>> ObterServicosOpcionaisPorLocadoraAsync(string locadoraNome)
+        {
+            await InicializarAsync();
+            return await _banco!.Table<ServicoOpcional>()
+                                .Where(s => s.LocadoraNome == locadoraNome)
+                                .ToListAsync();
+        }
+
+        public async Task<int> SalvarServicoOpcionalAsync(ServicoOpcional servico)
+        {
+            await InicializarAsync();
+            if (servico.Id != 0)
+            {
+                return await _banco!.UpdateAsync(servico);
+            }
+            return await _banco!.InsertAsync(servico);
+        }
+
+        public async Task<int> ExcluirServicoOpcionalAsync(ServicoOpcional servico)
+        {
+            await InicializarAsync();
+            return await _banco!.DeleteAsync(servico);
+        }
+
+        /// <summary>
+        /// Limpa e reconfigura todas as tabelas do banco de dados SQLite,
+        /// restaurando os seeds padrão de locadoras, consoles, usuários e locações de teste.
+        /// </summary>
+        public async Task RestaurarBancoDadosAsync()
+        {
+            await InicializarAsync();
+
+            // 1. Remove tabelas existentes
+            await _banco!.DropTableAsync<ServicoOpcional>();
+            await _banco!.DropTableAsync<Locacao>();
+            await _banco!.DropTableAsync<Historico>();
+            await _banco!.DropTableAsync<Item>();
+            await _banco!.DropTableAsync<Locadora>();
+            await _banco!.DropTableAsync<Usuario>();
+
+            // 2. Recria todas as tabelas vazias
+            await _banco.CreateTableAsync<Usuario>();
+            await _banco.CreateTableAsync<Locadora>();
+            await _banco.CreateTableAsync<Item>();
+            await _banco.CreateTableAsync<Historico>();
+            await _banco.CreateTableAsync<Locacao>();
+            await _banco.CreateTableAsync<ServicoOpcional>();
+
+            // 3. Executa a população com os dados padrão originais
+            await PopularDadosIniciaisAsync();
         }
     }
 }

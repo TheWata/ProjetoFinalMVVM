@@ -76,6 +76,11 @@ namespace ProjetoFinalMVVM.Models
         /// </summary>
         public string StatusLocacao { get; set; } = "Em Andamento";
 
+        /// <summary>
+        /// Código numérico aleatório de 6 dígitos (PIN de segurança) gerado na reserva para validação no balcão.
+        /// </summary>
+        public string CodigoConfirmacao { get; set; } = string.Empty;
+
         // Propriedades auxiliares de exibição na interface XAML (ignoradas pelo SQLite)
         [Ignore]
         public string DataHoraFormatada => DataHora.ToString("dd/MM/yyyy HH:mm");
@@ -96,12 +101,36 @@ namespace ProjetoFinalMVVM.Models
         public bool IsEmAndamento => StatusLocacao == "Em Andamento";
 
         [Ignore]
-        public string StatusCor => StatusLocacao == "Em Andamento" ? "#D97706" : "#16A34A";
+        public bool IsAguardandoRetirada => StatusLocacao == "Aguardando Retirada";
 
         [Ignore]
-        public string StatusBadgeBg => StatusLocacao == "Em Andamento" ? "#FEF3C7" : "#DCFCE7";
+        public bool TemCodigoConfirmacao => !string.IsNullOrEmpty(CodigoConfirmacao);
 
         [Ignore]
-        public string StatusBadgeText => StatusLocacao == "Em Andamento" ? "#B45309" : "#15803D";
+        public string StatusCor => StatusLocacao switch
+        {
+            "Aguardando Retirada" => "#D97706",
+            "Em Andamento" => "#0284C7",
+            "Devolvido" => "#16A34A",
+            _ => "#64748B"
+        };
+
+        [Ignore]
+        public string StatusBadgeBg => StatusLocacao switch
+        {
+            "Aguardando Retirada" => "#FEF3C7",
+            "Em Andamento" => "#E0F2FE",
+            "Devolvido" => "#DCFCE7",
+            _ => "#F1F5F9"
+        };
+
+        [Ignore]
+        public string StatusBadgeText => StatusLocacao switch
+        {
+            "Aguardando Retirada" => "#B45309",
+            "Em Andamento" => "#0369A1",
+            "Devolvido" => "#15803D",
+            _ => "#475569"
+        };
     }
 }

@@ -205,6 +205,7 @@ namespace ProjetoFinalMVVM.ViewModels
         public ICommand SalvarConfiguracoesCommand { get; }
         public ICommand PreencherGpsLocadoraCadastroCommand { get; }
         public ICommand ConsultarCepCadastroCommand { get; }
+        public ICommand RestaurarBancoDadosCommand { get; }
 
         public UsuarioViewModel()
         {
@@ -216,6 +217,7 @@ namespace ProjetoFinalMVVM.ViewModels
             SalvarConfiguracoesCommand = new Command(async () => await ExecutarSalvarConfiguracoesAsync());
             PreencherGpsLocadoraCadastroCommand = new Command(async () => await ExecutarPreencherGpsLocadoraCadastroAsync());
             ConsultarCepCadastroCommand = new Command(async () => await ExecutarConsultarCepAsync(LocadoraCepCadastro));
+            RestaurarBancoDadosCommand = new Command(async () => await ExecutarRestaurarBancoDadosAsync());
 
             _ = CarregarLocadorasDisponiveisAsync();
         }
@@ -660,6 +662,40 @@ namespace ProjetoFinalMVVM.ViewModels
             {
                 Email = "cliente@gamer.com";
                 Senha = "123";
+            }
+        }
+
+        private async Task ExecutarRestaurarBancoDadosAsync()
+        {
+            var pagina = ObterPaginaAtual();
+            if (pagina == null) return;
+
+            bool confirmou = await pagina.DisplayAlert(
+                "Restaurar Banco de Dados",
+                "Tem certeza de que deseja limpar e restaurar o banco de dados?\n\nTodas as locações, históricos e alterações serão redefinidos para os valores padrão de fábrica.",
+                "Sim, Restaurar",
+                "Cancelar");
+
+            if (!confirmou) return;
+
+            try
+            {
+                IsBusy = true;
+                await SQLiteDatabaseHelper.Instancia.RestaurarBancoDadosAsync();
+                await pagina.DisplayAlert(
+                    "Banco Restaurado! 🔄",
+                    "O banco de dados SQLite foi limpo e reconstruído com sucesso!\n\nDados padrão recriados:\n- Admin (admin@gamer.com / 123)\n- Locadora (locadora@gamer.com / 123)\n- Cliente (cliente@gamer.com / 123)",
+                    "OK");
+
+                await CarregarLocadorasDisponiveisAsync();
+            }
+            catch (Exception ex)
+            {
+                await pagina.DisplayAlert("Erro", $"Falha ao restaurar banco: {ex.Message}", "OK");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
     }

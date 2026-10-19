@@ -475,6 +475,189 @@
 
         </Grid>
 
+        <!-- WIDGET FLUTUANTE ESTILO IFOOD (PIN DE RETIRADA / STATUS DO PEDIDO) -->
+        <Border Grid.RowSpan="3"
+                VerticalOptions="End"
+                HorizontalOptions="End"
+                Margin="0,0,16,20"
+                Stroke="#F59E0B"
+                StrokeThickness="1.5"
+                BackgroundColor="#0F172A"
+                StrokeShape="RoundRectangle 28"
+                Padding="16,10"
+                IsVisible="{Binding TemLocacaoPendenteRetirada}"
+                ZIndex="99">
+            <Border.Shadow>
+                <Shadow Brush="#000000" Offset="0,6" Radius="12" Opacity="0.35" />
+            </Border.Shadow>
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding AbrirModalPinCommand}" />
+            </Border.GestureRecognizers>
+            <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                <!-- Ícone Estilo Chave / Cadeado -->
+                <Border WidthRequest="34"
+                        HeightRequest="34"
+                        BackgroundColor="#F59E0B"
+                        StrokeShape="RoundRectangle 17"
+                        StrokeThickness="0">
+                    <Label Text="&#xf084;"
+                           FontFamily="FontAwesomeSolid"
+                           FontSize="15"
+                           TextColor="#FFFFFF"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+                </Border>
+
+                <!-- Informações Rápidas -->
+                <VerticalStackLayout Spacing="1" VerticalOptions="Center">
+                    <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                        <Label Text="RETIRADA ATIVA"
+                               FontSize="9"
+                               FontAttributes="Bold"
+                               TextColor="#FBBF24" />
+                        <Border BackgroundColor="#16A34A"
+                                StrokeShape="RoundRectangle 4"
+                                Padding="4,1">
+                            <Label Text="VER PIN"
+                                   FontSize="8"
+                                   FontAttributes="Bold"
+                                   TextColor="#FFFFFF" />
+                        </Border>
+                    </HorizontalStackLayout>
+                    <Label Text="{Binding CodigoPinPendente, StringFormat='PIN: {0}'}"
+                           FontSize="15"
+                           FontAttributes="Bold"
+                           TextColor="#FFFFFF" />
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
+        </Border>
+
+        <!-- MODAL ESTILO IFOOD / DETALHES DO PIN DE RETIRADA -->
+        <Grid Grid.RowSpan="3"
+              BackgroundColor="#99000000"
+              IsVisible="{Binding IsModalPinVisivel}"
+              ZIndex="100"
+              Padding="20">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding FecharModalPinCommand}" />
+            </Grid.GestureRecognizers>
+
+            <Border Stroke="#F59E0B"
+                    StrokeThickness="2"
+                    BackgroundColor="#FFFFFF"
+                    StrokeShape="RoundRectangle 20"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"
+                    MaximumWidthRequest="380"
+                    Padding="22">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer />
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="14">
+
+                    <!-- Topo do Modal -->
+                    <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                        <HorizontalStackLayout Grid.Column="0" Spacing="8" VerticalOptions="Center">
+                            <Label Text="&#xf084;"
+                                   FontFamily="FontAwesomeSolid"
+                                   FontSize="18"
+                                   TextColor="#D97706"
+                                   VerticalOptions="Center" />
+                            <Label Text="Código de Retirada"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   TextColor="#0F172A" />
+                        </HorizontalStackLayout>
+
+                        <Button Grid.Column="1"
+                                Text="✕"
+                                Command="{Binding FecharModalPinCommand}"
+                                BackgroundColor="#F1F5F9"
+                                TextColor="#64748B"
+                                FontAttributes="Bold"
+                                FontSize="13"
+                                CornerRadius="16"
+                                WidthRequest="32"
+                                HeightRequest="32"
+                                Padding="0" />
+                    </Grid>
+
+                    <Label Text="Apresente este código numérico no balcão da filial para liberar a entrega do seu videogame:"
+                           FontSize="12"
+                           TextColor="#64748B" />
+
+                    <!-- Dígitos Destacados Gigantes -->
+                    <Border BackgroundColor="#FFFBEB"
+                            Stroke="#FDE68A"
+                            StrokeThickness="2"
+                            StrokeShape="RoundRectangle 14"
+                            Padding="16,12">
+                        <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                            <Label Text="PIN DE SEGURANÇA"
+                                   FontSize="10"
+                                   FontAttributes="Bold"
+                                   TextColor="#B45309"
+                                   HorizontalTextAlignment="Center" />
+                            <Label Text="{Binding CodigoPinPendente}"
+                                   FontSize="32"
+                                   FontAttributes="Bold"
+                                   TextColor="#B45309"
+                                   HorizontalTextAlignment="Center"
+                                   CharacterSpacing="6" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Detalhes do Pedido -->
+                    <Border BackgroundColor="#F8FAFC"
+                            Stroke="#E2E8F0"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 10"
+                            Padding="12,10">
+                        <VerticalStackLayout Spacing="4">
+                            <HorizontalStackLayout Spacing="6">
+                                <Label Text="Console:" FontSize="11" TextColor="#64748B" />
+                                <Label Text="{Binding ItemNomePendente}" FontSize="11" FontAttributes="Bold" TextColor="#0F172A" />
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout Spacing="6">
+                                <Label Text="Filial:" FontSize="11" TextColor="#64748B" />
+                                <Label Text="{Binding LocadoraNomePendente}" FontSize="11" FontAttributes="Bold" TextColor="#16A34A" />
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout Spacing="6">
+                                <Label Text="Status:" FontSize="11" TextColor="#64748B" />
+                                <Label Text="Aguardando Retirada" FontSize="11" FontAttributes="Bold" TextColor="#D97706" />
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Botões de Ação -->
+                    <Grid ColumnDefinitions="*, *" ColumnSpacing="10" Margin="0,4,0,0">
+                        <Button Grid.Column="0"
+                                Text="Copiar PIN"
+                                Command="{Binding CopiarPinCommand}"
+                                BackgroundColor="#16A34A"
+                                TextColor="#FFFFFF"
+                                FontAttributes="Bold"
+                                FontSize="12"
+                                CornerRadius="8"
+                                HeightRequest="42" />
+
+                        <Button Grid.Column="1"
+                                Text="Fechar"
+                                Command="{Binding FecharModalPinCommand}"
+                                BackgroundColor="#F1F5F9"
+                                TextColor="#475569"
+                                BorderColor="#CBD5E1"
+                                BorderWidth="1"
+                                FontAttributes="Bold"
+                                FontSize="12"
+                                CornerRadius="8"
+                                HeightRequest="42" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
     </Grid>
 
 </ContentPage>

@@ -301,6 +301,93 @@ namespace ProjetoFinalMVVM.ViewModels
         public ObservableCollection<Historico> Historicos { get; } = new ObservableCollection<Historico>();
         public ObservableCollection<string> LocadorasNomes { get; } = new ObservableCollection<string>();
 
+        // Coleção de locações pendentes de retirada (aguardando conferência do PIN de 6 dígitos)
+        public ObservableCollection<Locacao> LocacoesPendentesRetirada { get; } = new ObservableCollection<Locacao>();
+
+        private int _locacoesPendentesCount;
+        public int LocacoesPendentesCount
+        {
+            get => _locacoesPendentesCount;
+            set => SetProperty(ref _locacoesPendentesCount, value);
+        }
+
+        // Coleção de serviços opcionais gerenciados pela locadora vinculada
+        public ObservableCollection<ServicoOpcional> ServicosOpcionaisDaUnidade { get; } = new ObservableCollection<ServicoOpcional>();
+
+        private int _servicosOpcionaisCount;
+        public int ServicosOpcionaisCount
+        {
+            get => _servicosOpcionaisCount;
+            set => SetProperty(ref _servicosOpcionaisCount, value);
+        }
+
+        // Controle do Formulário de Cadastro de Novo Serviço Opcional
+        private bool _isFormularioNovoServicoVisivel;
+        public bool IsFormularioNovoServicoVisivel
+        {
+            get => _isFormularioNovoServicoVisivel;
+            set => SetProperty(ref _isFormularioNovoServicoVisivel, value);
+        }
+
+        private string _novoServicoNome = string.Empty;
+        public string NovoServicoNome
+        {
+            get => _novoServicoNome;
+            set => SetProperty(ref _novoServicoNome, value);
+        }
+
+        private string _novoServicoDescricao = string.Empty;
+        public string NovoServicoDescricao
+        {
+            get => _novoServicoDescricao;
+            set => SetProperty(ref _novoServicoDescricao, value);
+        }
+
+        private string _novoServicoValorTexto = string.Empty;
+        public string NovoServicoValorTexto
+        {
+            get => _novoServicoValorTexto;
+            set => SetProperty(ref _novoServicoValorTexto, value);
+        }
+
+        // ==========================================
+        // WIDGET FLUTUANTE ESTILO IFOOD (PIN DO CLIENTE)
+        // ==========================================
+        private bool _temLocacaoPendenteRetirada;
+        public bool TemLocacaoPendenteRetirada
+        {
+            get => _temLocacaoPendenteRetirada;
+            set => SetProperty(ref _temLocacaoPendenteRetirada, value);
+        }
+
+        private string _codigoPinPendente = string.Empty;
+        public string CodigoPinPendente
+        {
+            get => _codigoPinPendente;
+            set => SetProperty(ref _codigoPinPendente, value);
+        }
+
+        private string _itemNomePendente = string.Empty;
+        public string ItemNomePendente
+        {
+            get => _itemNomePendente;
+            set => SetProperty(ref _itemNomePendente, value);
+        }
+
+        private string _locadoraNomePendente = string.Empty;
+        public string LocadoraNomePendente
+        {
+            get => _locadoraNomePendente;
+            set => SetProperty(ref _locadoraNomePendente, value);
+        }
+
+        private bool _isModalPinVisivel;
+        public bool IsModalPinVisivel
+        {
+            get => _isModalPinVisivel;
+            set => SetProperty(ref _isModalPinVisivel, value);
+        }
+
         // Cache local de todos os consoles para filtros rápidos
         private readonly List<Item> _todosConsolesDisponiveisCache = new List<Item>();
 
@@ -540,6 +627,18 @@ namespace ProjetoFinalMVVM.ViewModels
         public ICommand IrParaConfiguracoesCommand { get; }
         public ICommand VoltarCommand { get; }
         public ICommand DeslogarCommand { get; }
+        public ICommand ValidarCodigoRetiradaCommand { get; }
+
+        public ICommand AbrirModalPinCommand { get; }
+        public ICommand FecharModalPinCommand { get; }
+        public ICommand CopiarPinCommand { get; }
+        public ICommand RestaurarBancoDadosCommand { get; }
+
+        public ICommand AbrirFormularioNovoServicoCommand { get; }
+        public ICommand FecharFormularioNovoServicoCommand { get; }
+        public ICommand SalvarNovoServicoOpcionalCommand { get; }
+        public ICommand ExcluirServicoOpcionalCommand { get; }
+        public ICommand AlternarAtivoServicoOpcionalCommand { get; }
 
         public ItemViewModel()
         {
@@ -590,6 +689,27 @@ namespace ProjetoFinalMVVM.ViewModels
             IrParaConfiguracoesCommand = new Command(async () => await ExecutarIrParaConfiguracoesAsync());
             VoltarCommand = new Command(async () => await ExecutarVoltarAsync());
             DeslogarCommand = new Command(async () => await ExecutarDeslogarAsync());
+            ValidarCodigoRetiradaCommand = new Command<Locacao>(async loc => await ExecutarValidarCodigoRetiradaAsync(loc));
+
+            AbrirModalPinCommand = new Command(() => IsModalPinVisivel = true);
+            FecharModalPinCommand = new Command(() => IsModalPinVisivel = false);
+            CopiarPinCommand = new Command(async () => await ExecutarCopiarPinAsync());
+            RestaurarBancoDadosCommand = new Command(async () => await ExecutarRestaurarBancoDadosAsync());
+
+            AbrirFormularioNovoServicoCommand = new Command(() =>
+            {
+                NovoServicoNome = string.Empty;
+                NovoServicoDescricao = string.Empty;
+                NovoServicoValorTexto = string.Empty;
+                IsFormularioNovoServicoVisivel = true;
+            });
+            FecharFormularioNovoServicoCommand = new Command(() =>
+            {
+                IsFormularioNovoServicoVisivel = false;
+            });
+            SalvarNovoServicoOpcionalCommand = new Command(async () => await ExecutarSalvarNovoServicoOpcionalAsync());
+            ExcluirServicoOpcionalCommand = new Command<ServicoOpcional>(async serv => await ExecutarExcluirServicoOpcionalAsync(serv));
+            AlternarAtivoServicoOpcionalCommand = new Command<ServicoOpcional>(async serv => await ExecutarAlternarAtivoServicoOpcionalAsync(serv));
         }
 
         private Page? ObterPaginaAtual()
@@ -670,6 +790,27 @@ namespace ProjetoFinalMVVM.ViewModels
 
                 // 6. Aplica filtro inicial (ou todos ordenados por proximidade)
                 AplicarFiltroConsoles();
+
+                // 7. Busca se o cliente logado possui alguma locação pendente de retirada (para o botão estilo iFood)
+                var locacoesPendentes = await SQLiteDatabaseHelper.Instancia.ObterLocacoesPorStatusAsync(
+                    StatusLocacaoEnum.AguardandoRetirada);
+
+                var pendenteCliente = locacoesPendentes.Find(l => l.UsuarioId == UsuarioAtual.Instancia.Id);
+                if (pendenteCliente != null)
+                {
+                    TemLocacaoPendenteRetirada = true;
+                    CodigoPinPendente = pendenteCliente.CodigoConfirmacao;
+                    ItemNomePendente = pendenteCliente.ItemNome;
+                    LocadoraNomePendente = pendenteCliente.LocadoraNome;
+                }
+                else
+                {
+                    TemLocacaoPendenteRetirada = false;
+                    CodigoPinPendente = string.Empty;
+                    ItemNomePendente = string.Empty;
+                    LocadoraNomePendente = string.Empty;
+                    IsModalPinVisivel = false;
+                }
             }
             catch (Exception ex)
             {
@@ -875,6 +1016,26 @@ namespace ProjetoFinalMVVM.ViewModels
 
                 // 4. Preenche o calendário de devoluções exclusivo desta filial
                 await GerarCalendarioInterativoAsync(historicos);
+
+                // 5. Carrega as locações pendentes de retirada nesta filial para validação com PIN de 6 dígitos
+                var pendentes = await SQLiteDatabaseHelper.Instancia.ObterLocacoesPorStatusAsync(
+                    StatusLocacaoEnum.AguardandoRetirada, filialNome);
+
+                LocacoesPendentesRetirada.Clear();
+                foreach (var p in pendentes)
+                {
+                    LocacoesPendentesRetirada.Add(p);
+                }
+                LocacoesPendentesCount = LocacoesPendentesRetirada.Count;
+
+                // 6. Carrega os serviços opcionais cadastrados e gerenciados exclusivamente por esta filial
+                var servicosFilial = await SQLiteDatabaseHelper.Instancia.ObterServicosOpcionaisPorLocadoraAsync(filialNome);
+                ServicosOpcionaisDaUnidade.Clear();
+                foreach (var s in servicosFilial)
+                {
+                    ServicosOpcionaisDaUnidade.Add(s);
+                }
+                ServicosOpcionaisCount = ServicosOpcionaisDaUnidade.Count;
             }
             catch (Exception ex)
             {
@@ -1018,6 +1179,221 @@ namespace ProjetoFinalMVVM.ViewModels
             if (SelecionadoDia != null)
             {
                 await CarregarDevolucoesDoDiaAsync(SelecionadoDia.Data);
+            }
+        }
+
+        /// <summary>
+        /// Validação de entrega/retirada na visão da Locadora baseada em PIN de 6 dígitos.
+        /// A locadora digita o código de 6 dígitos que o cliente informou.
+        /// Se o código for correto, o status da locação é alterado no SQLite para Alugado
+        /// e a lista é atualizada via ObservableCollection.
+        /// Se for incorreto, exibe um alerta de validação amigável via DisplayAlert.
+        /// </summary>
+        private async Task ExecutarValidarCodigoRetiradaAsync(Locacao? locacao)
+        {
+            if (locacao == null) return;
+
+            var pagina = ObterPaginaAtual();
+            if (pagina == null) return;
+
+            string codigoDigitado = locacao.CodigoDigitado?.Trim() ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(codigoDigitado))
+            {
+                await pagina.DisplayAlert(
+                    "Código Obrigatório",
+                    "Por favor, digite o PIN numérico de 6 dígitos apresentado pelo cliente para validar a retirada.",
+                    "OK");
+                return;
+            }
+
+            if (codigoDigitado.Length != 6)
+            {
+                await pagina.DisplayAlert(
+                    "Formato Inválido",
+                    "O código de confirmação deve possuir exatamente 6 dígitos numéricos (ex: 849201).",
+                    "OK");
+                return;
+            }
+
+            bool validado = await SQLiteDatabaseHelper.Instancia.ValidarCodigoRetiradaAsync(locacao.Id, codigoDigitado);
+
+            if (validado)
+            {
+                await pagina.DisplayAlert(
+                    "Retirada Autorizada! ✅",
+                    $"Código {codigoDigitado} validado com sucesso!\n\n" +
+                    $"Cliente: {locacao.UsuarioNome}\n" +
+                    $"Console: {locacao.ItemNome} (Serial: {locacao.ChaveSerialConsole})\n\n" +
+                    "O status da locação foi atualizado para 'Alugado' e o console pode ser entregue.",
+                    "Concluir");
+
+                // Atualiza a lista na interface via ObservableCollection
+                LocacoesPendentesRetirada.Remove(locacao);
+                LocacoesPendentesCount = LocacoesPendentesRetirada.Count;
+
+                // Recarrega contadores e estoque da unidade
+                await CarregarDadosLocadoraAsync();
+            }
+            else
+            {
+                await pagina.DisplayAlert(
+                    "Código Incorreto! ❌",
+                    $"O código '{codigoDigitado}' não confere com o PIN gerado para esta locação.\n\n" +
+                    "Por favor, solicite ao cliente que confira o código de 6 dígitos na tela de confirmação ou no Histórico de Locações do app.",
+                    "Tentar Novamente");
+            }
+        }
+
+        private async Task ExecutarCopiarPinAsync()
+        {
+            if (string.IsNullOrEmpty(CodigoPinPendente)) return;
+
+            await Clipboard.Default.SetTextAsync(CodigoPinPendente);
+            var pagina = ObterPaginaAtual();
+            if (pagina != null)
+            {
+                await pagina.DisplayAlert("Copiado! 📋", $"Código PIN '{CodigoPinPendente}' copiado com sucesso!\nApresente no balcão da filial {LocadoraNomePendente}.", "OK");
+            }
+        }
+
+        // ==========================================
+        // GESTÃO DE SERVIÇOS OPCIONAIS PELA LOCADORA
+        // ==========================================
+
+        private async Task ExecutarSalvarNovoServicoOpcionalAsync()
+        {
+            var pagina = ObterPaginaAtual();
+            if (pagina == null) return;
+
+            if (string.IsNullOrWhiteSpace(NovoServicoNome))
+            {
+                await pagina.DisplayAlert("Campo Obrigatório", "Por favor, informe o nome do serviço ou acessório adicional.", "OK");
+                return;
+            }
+
+            string valorLimpo = NovoServicoValorTexto.Replace("R$", "").Trim();
+            if (!decimal.TryParse(valorLimpo, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.CurrentCulture, out decimal valor) &&
+                !decimal.TryParse(valorLimpo, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out valor))
+            {
+                await pagina.DisplayAlert("Valor Inválido", "Por favor, digite um valor numérico válido para o serviço (ex: 20,00).", "OK");
+                return;
+            }
+
+            if (valor <= 0)
+            {
+                await pagina.DisplayAlert("Valor Inválido", "O valor do serviço opcional deve ser maior que zero.", "OK");
+                return;
+            }
+
+            string filialNome = UsuarioAtual.Instancia.LocadoraVinculadaNome;
+            var todasLocadoras = await SQLiteDatabaseHelper.Instancia.ObterLocadorasAsync();
+            var loc = todasLocadoras.FirstOrDefault(l => l.Nome == filialNome);
+            int locId = loc?.Id ?? 0;
+
+            // Define ícone temático FontAwesomeSolid baseado no tipo de serviço
+            string glyph = "\uf7a9";
+            string nomeLower = NovoServicoNome.ToLowerInvariant();
+            if (nomeLower.Contains("controle") || nomeLower.Contains("joystick"))
+                glyph = "\uf11b";
+            else if (nomeLower.Contains("headset") || nomeLower.Contains("fone") || nomeLower.Contains("audio"))
+                glyph = "\uf025";
+            else if (nomeLower.Contains("seguro") || nomeLower.Contains("garantia") || nomeLower.Contains("protecao"))
+                glyph = "\uf3ed";
+            else if (nomeLower.Contains("jogo") || nomeLower.Contains("midia") || nomeLower.Contains("disco"))
+                glyph = "\uf02d";
+            else if (nomeLower.Contains("cabo") || nomeLower.Contains("hdmi") || nomeLower.Contains("fonte"))
+                glyph = "\uf0c1";
+
+            var novoServico = new ServicoOpcional
+            {
+                LocadoraId = locId,
+                LocadoraNome = filialNome,
+                Nome = NovoServicoNome.Trim(),
+                Descricao = string.IsNullOrWhiteSpace(NovoServicoDescricao) ? "Serviço adicional oferecido pela unidade." : NovoServicoDescricao.Trim(),
+                IconeGlyph = glyph,
+                Valor = valor,
+                Ativo = true
+            };
+
+            await SQLiteDatabaseHelper.Instancia.SalvarServicoOpcionalAsync(novoServico);
+
+            NovoServicoNome = string.Empty;
+            NovoServicoDescricao = string.Empty;
+            NovoServicoValorTexto = string.Empty;
+            IsFormularioNovoServicoVisivel = false;
+
+            await pagina.DisplayAlert("Sucesso", $"Serviço '{novoServico.Nome}' cadastrado com sucesso para a filial {filialNome}!", "OK");
+            await CarregarDadosLocadoraAsync();
+        }
+
+        private async Task ExecutarExcluirServicoOpcionalAsync(ServicoOpcional? servico)
+        {
+            if (servico == null) return;
+
+            var pagina = ObterPaginaAtual();
+            if (pagina == null) return;
+
+            bool confirma = await pagina.DisplayAlert(
+                "Excluir Serviço Opcional",
+                $"Deseja realmente remover o opcional '{servico.Nome}' ({servico.ValorFormatado}) da sua filial?",
+                "Sim, Excluir",
+                "Cancelar");
+
+            if (!confirma) return;
+
+            await SQLiteDatabaseHelper.Instancia.ExcluirServicoOpcionalAsync(servico);
+            ServicosOpcionaisDaUnidade.Remove(servico);
+            ServicosOpcionaisCount = ServicosOpcionaisDaUnidade.Count;
+
+            await pagina.DisplayAlert("Removido", "Serviço adicional removido com sucesso.", "OK");
+        }
+
+        private async Task ExecutarAlternarAtivoServicoOpcionalAsync(ServicoOpcional? servico)
+        {
+            if (servico == null) return;
+
+            servico.Ativo = !servico.Ativo;
+            await SQLiteDatabaseHelper.Instancia.SalvarServicoOpcionalAsync(servico);
+            await CarregarDadosLocadoraAsync();
+        }
+
+        private async Task ExecutarRestaurarBancoDadosAsync()
+        {
+            var pagina = ObterPaginaAtual();
+            if (pagina == null) return;
+
+            bool confirmou = await pagina.DisplayAlert(
+                "Restaurar Banco de Dados",
+                "Tem certeza de que deseja limpar e restaurar o banco de dados?\n\nTodas as locações, históricos e alterações serão redefinidos para os valores padrão de fábrica.",
+                "Sim, Restaurar",
+                "Cancelar");
+
+            if (!confirmou) return;
+
+            try
+            {
+                IsBusy = true;
+                await SQLiteDatabaseHelper.Instancia.RestaurarBancoDadosAsync();
+                await pagina.DisplayAlert(
+                    "Banco Restaurado! 🔄",
+                    "O banco de dados SQLite foi limpo e reconstruído com sucesso!\n\nDados padrão recriados:\n- Admin (admin@gamer.com / 123)\n- Locadora (locadora@gamer.com / 123)\n- Cliente (cliente@gamer.com / 123)",
+                    "OK");
+
+                if (UsuarioAtual.Instancia.IsAdministrador)
+                    await CarregarDadosAdminAsync();
+                else if (UsuarioAtual.Instancia.IsLocadora)
+                    await CarregarDadosLocadoraAsync();
+                else
+                    await CarregarDadosClienteAsync();
+            }
+            catch (Exception ex)
+            {
+                await pagina.DisplayAlert("Erro", $"Falha ao restaurar banco: {ex.Message}", "OK");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 

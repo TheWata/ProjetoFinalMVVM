@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.Maui.Controls;
@@ -22,6 +24,20 @@ namespace ProjetoFinalMVVM.ViewModels
         private readonly ItemViewModel? _itemViewModel;
 
         public Item Console => _console;
+
+        private string _codigoConfirmacaoGerado = string.Empty;
+        public string CodigoConfirmacaoGerado
+        {
+            get => _codigoConfirmacaoGerado;
+            set => SetProperty(ref _codigoConfirmacaoGerado, value);
+        }
+
+        private bool _isLocacaoConcluida;
+        public bool IsLocacaoConcluida
+        {
+            get => _isLocacaoConcluida;
+            set => SetProperty(ref _isLocacaoConcluida, value);
+        }
 
         // ==========================================
         // SELEÇÃO DE MODALIDADE DEFINIDA PELA LOJA
@@ -101,50 +117,15 @@ namespace ProjetoFinalMVVM.ViewModels
         };
 
         // ==========================================
-        // PACOTES DE SERVIÇOS & ACESSÓRIOS ADICIONAIS
+        // PACOTES DE SERVIÇOS & ACESSÓRIOS ADICIONAIS DA LOCADORA
         // ==========================================
-        private bool _incluirControleExtra;
-        public bool IncluirControleExtra
-        {
-            get => _incluirControleExtra;
-            set
-            {
-                if (SetProperty(ref _incluirControleExtra, value))
-                    AtualizarRecalculoCompleto();
-            }
-        }
+        public ObservableCollection<ServicoOpcional> ServicosOpcionaisDisponiveis { get; } = new ObservableCollection<ServicoOpcional>();
 
-        private bool _incluirHeadsetGamer;
-        public bool IncluirHeadsetGamer
+        private bool _temServicosOpcionais;
+        public bool TemServicosOpcionais
         {
-            get => _incluirHeadsetGamer;
-            set
-            {
-                if (SetProperty(ref _incluirHeadsetGamer, value))
-                    AtualizarRecalculoCompleto();
-            }
-        }
-
-        private bool _incluirJogosExtras;
-        public bool IncluirJogosExtras
-        {
-            get => _incluirJogosExtras;
-            set
-            {
-                if (SetProperty(ref _incluirJogosExtras, value))
-                    AtualizarRecalculoCompleto();
-            }
-        }
-
-        private bool _incluirSeguroProtecao;
-        public bool IncluirSeguroProtecao
-        {
-            get => _incluirSeguroProtecao;
-            set
-            {
-                if (SetProperty(ref _incluirSeguroProtecao, value))
-                    AtualizarRecalculoCompleto();
-            }
+            get => _temServicosOpcionais;
+            set => SetProperty(ref _temServicosOpcionais, value);
         }
 
         // ==========================================
@@ -195,18 +176,7 @@ namespace ProjetoFinalMVVM.ViewModels
         public decimal SubtotalPlano => PrecoUnitarioPlano * QuantidadePeriodo;
         public string SubtotalPlanoFormatado => $"R$ {SubtotalPlano:F2}";
 
-        public decimal SubtotalExtras
-        {
-            get
-            {
-                decimal total = 0;
-                if (IncluirControleExtra) total += 15.00m;
-                if (IncluirHeadsetGamer) total += 12.00m;
-                if (IncluirJogosExtras) total += 20.00m;
-                if (IncluirSeguroProtecao) total += 25.00m;
-                return total;
-            }
-        }
+        public decimal SubtotalExtras => ServicosOpcionaisDisponiveis.Where(s => s.Selecionado).Sum(s => s.Valor);
         public string SubtotalExtrasFormatado => $"R$ {SubtotalExtras:F2}";
 
         public string TaxaEntregaFormatada => IsEntregaDomicilio ? "R$ 18,00" : "Grátis (Balcão)";
@@ -227,12 +197,10 @@ namespace ProjetoFinalMVVM.ViewModels
         {
             get
             {
-                var itens = new List<string>();
-                if (IncluirControleExtra) itens.Add("Controle Extra (+R$ 15,00)");
-                if (IncluirHeadsetGamer) itens.Add("Headset Gamer Pro (+R$ 12,00)");
-                if (IncluirJogosExtras) itens.Add("2 Jogos Físicos Extras (+R$ 20,00)");
-                if (IncluirSeguroProtecao) itens.Add("Seguro Proteção Acidental (+R$ 25,00)");
-                return itens.Count > 0 ? string.Join("; ", itens) : "Nenhum adicional selecionado";
+                var selecionados = ServicosOpcionaisDisponiveis.Where(s => s.Selecionado).ToList();
+                return selecionados.Count > 0
+                    ? string.Join("; ", selecionados.Select(s => $"{s.Nome} (+{s.ValorFormatado})"))
+                    : "Nenhum adicional selecionado";
             }
         }
 
@@ -251,6 +219,7 @@ namespace ProjetoFinalMVVM.ViewModels
         public ICommand DiminuirPeriodoCommand { get; }
         public ICommand ConfirmarLocacaoCommand { get; }
         public ICommand VoltarCommand { get; }
+        public ICommand AlternarServicoCommand { get; }
 
         public AluguelDetalhesViewModel(Item console, ItemViewModel? itemViewModel = null)
         {
@@ -294,6 +263,37 @@ namespace ProjetoFinalMVVM.ViewModels
 
             ConfirmarLocacaoCommand = new Command(async () => await ExecutarConfirmarLocacaoAsync());
             VoltarCommand = new Command(async () => await ExecutarVoltarAsync());
+            AlternarServicoCommand = new Command<ServicoOpcional>(servico =>
+            {
+                if (servico == null) return;
+                servico.Selecionado = !servico.Selecionado;
+                AtualizarRecalculoCompleto();
+            });
+
+            _ = CarregarServicosOpcionaisAsync();
+        }
+
+        private async Task CarregarServicosOpcionaisAsync()
+        {
+            try
+            {
+                var servicos = await SQLiteDatabaseHelper.Instancia.ObterServicosOpcionaisPorLocadoraAsync(_console.LocadoraNome);
+                ServicosOpcionaisDisponiveis.Clear();
+                foreach (var s in servicos)
+                {
+                    if (s.Ativo)
+                    {
+                        s.OnSelecaoAlterada = () => AtualizarRecalculoCompleto();
+                        ServicosOpcionaisDisponiveis.Add(s);
+                    }
+                }
+                TemServicosOpcionais = ServicosOpcionaisDisponiveis.Count > 0;
+                AtualizarRecalculoCompleto();
+            }
+            catch
+            {
+                // Tratamento seguro
+            }
         }
 
         private void AtualizarRecalculoCompleto()
@@ -358,6 +358,40 @@ namespace ProjetoFinalMVVM.ViewModels
                 _ => QuantidadePeriodo
             };
 
+            // Geração de PIN criptograficamente seguro com 6 dígitos (100000 a 999999)
+            string codigoPin = System.Security.Cryptography.RandomNumberGenerator.GetInt32(100000, 1000000).ToString();
+            CodigoConfirmacaoGerado = codigoPin;
+            IsLocacaoConcluida = true;
+
+            // Busca os dados da locadora correspondente para vincular o ID
+            var locadoraInfo = await SQLiteDatabaseHelper.Instancia.ObterLocadoraPorNomeAsync(_console.LocadoraNome);
+
+            // 1. Salva a nova Locação com status estrito AguardandoRetirada
+            var novaLocacao = new Locacao
+            {
+                UsuarioId = UsuarioAtual.Instancia.Id,
+                UsuarioNome = UsuarioAtual.Instancia.Nome,
+                ItemId = _console.Id,
+                ItemNome = _console.Nome,
+                ChaveSerialConsole = _console.ChaveSerial,
+                LocadoraId = locadoraInfo?.Id ?? 0,
+                LocadoraNome = _console.LocadoraNome,
+                DataLocacao = DateTime.Now,
+                DataDevolucaoPrevista = DataDevolucaoCalculada,
+                CodigoConfirmacao = codigoPin,
+                StatusLocacao = StatusLocacaoEnum.AguardandoRetirada,
+                ValorTotal = TotalGeral,
+                TaxaAdicional = SubtotalExtras + ValorTaxaEntrega,
+                ModalidadeAluguel = ModalidadeSelecionada,
+                QuantidadePeriodo = QuantidadePeriodo,
+                DiasLocados = diasEquivalentes,
+                FormaEntrega = ResumoEntregaTexto,
+                DescricaoExtras = ResumoExtrasTexto
+            };
+
+            await SQLiteDatabaseHelper.Instancia.SalvarLocacaoAsync(novaLocacao);
+
+            // 2. Salva no Histórico para acompanhamento no Dashboard e Histórico do Cliente
             var historico = new Historico
             {
                 UsuarioId = UsuarioAtual.Instancia.Id,
@@ -366,6 +400,7 @@ namespace ProjetoFinalMVVM.ViewModels
                 ItemNome = _console.Nome,
                 ChaveSerialConsole = _console.ChaveSerial,
                 LocadoraNome = _console.LocadoraNome,
+                CodigoConfirmacao = codigoPin,
                 DataHora = DateTime.Now,
                 DataDevolucaoPrevista = DataDevolucaoCalculada,
                 DiasLocados = diasEquivalentes,
@@ -375,21 +410,24 @@ namespace ProjetoFinalMVVM.ViewModels
                 FormaEntrega = ResumoEntregaTexto,
                 TaxaAdicional = SubtotalExtras + ValorTaxaEntrega,
                 ValorTotal = TotalGeral,
-                StatusLocacao = "Em Andamento"
+                StatusLocacao = "Aguardando Retirada"
             };
 
             await SQLiteDatabaseHelper.Instancia.SalvarHistoricoAsync(historico);
 
-            // Marca o console como alugado no banco
-            _console.Status = "Alugado";
+            // 3. Atualiza o status do console para 'Reservado' para impedir locação duplicada
+            _console.Status = "Reservado";
             await SQLiteDatabaseHelper.Instancia.SalvarItemAsync(_console);
 
+            // 4. Exibe o PIN de 6 dígitos gerado ao cliente com instruções claras de retirada
             await pagina.DisplayAlert(
-                "Reserva Confirmada com Sucesso!",
+                "Locação Reservada com Sucesso!",
                 $"Parabéns, {UsuarioAtual.Instancia.Nome}!\nSeu console {_console.Nome} foi reservado.\n\n" +
-                $"Instruções de Entrega/Retirada:\n{ResumoEntregaTexto}\n" +
-                $"Data Limite de Devolução: {DataDevolucaoFormatada}",
-                "Concluir");
+                $"🔐 CÓDIGO DE RETIRADA (PIN):  {codigoPin} \n\n" +
+                $"Apresente este código de 6 dígitos no balcão da filial '{_console.LocadoraNome}' para validar e liberar a retirada do console.\n\n" +
+                $"Status: Aguardando Retirada\n" +
+                $"Devolução Prevista: {DataDevolucaoFormatada}",
+                "Entendi, Guardar Código");
 
             // Recarrega os dados do cliente se o ItemViewModel estiver vinculado
             if (_itemViewModel != null)

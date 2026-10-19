@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:ProjetoFinalMVVM.ViewModels"
+             xmlns:models="clr-namespace:ProjetoFinalMVVM.Models"
              x:Class="ProjetoFinalMVVM.Views.AluguelDetalhesView"
              x:DataType="vm:AluguelDetalhesViewModel"
              Title="Configuração da Locação"
@@ -320,147 +321,83 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <!-- 5. PACOTES E SERVIÇOS ADICIONAIS -->
+                <!-- 5. PACOTES E SERVIÇOS ADICIONAIS CADASTRADOS PELA FILIAL -->
                 <Border Stroke="#E2E8F0"
                         StrokeThickness="1"
                         BackgroundColor="#FFFFFF"
                         StrokeShape="RoundRectangle 14"
                         Padding="14">
                     <VerticalStackLayout Spacing="12">
-                        <HorizontalStackLayout Spacing="6">
-                            <Label Text="&#xf7a9;"
-                                   FontFamily="FontAwesomeSolid"
-                                   FontSize="14"
-                                   TextColor="#7E22CE"
-                                   VerticalOptions="Center" />
-                            <Label Text="Serviços e Acessórios Adicionais"
-                                   FontSize="14"
-                                   FontAttributes="Bold"
-                                   TextColor="#0F172A" />
-                        </HorizontalStackLayout>
-                        <Label Text="Escolha acessórios extras para melhorar sua experiência gamer:"
-                               FontSize="11"
-                               TextColor="#64748B" />
-
-                        <!-- Extra 1: Controle Extra Sem Fio -->
-                        <Border Stroke="#E2E8F0"
-                                StrokeThickness="1"
-                                BackgroundColor="#F8FAFC"
-                                StrokeShape="RoundRectangle 8"
-                                Padding="10,8">
-                            <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10" VerticalOptions="Center">
-                                <Label Grid.Column="0"
-                                       Text="&#xf11b;"
-                                       FontFamily="FontAwesomeSolid"
-                                       FontSize="14"
-                                       TextColor="#0284C7"
-                                       VerticalOptions="Center" />
-                                <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
-                                    <Label Text="Controle Sem Fio Adicional"
-                                           FontSize="12"
-                                           FontAttributes="Bold"
-                                           TextColor="#0F172A" />
-                                    <Label Text="Para multiplayer local (+ R$ 15,00)"
-                                           FontSize="10"
-                                           TextColor="#64748B" />
-                                </VerticalStackLayout>
-                                <Switch Grid.Column="2"
-                                        IsToggled="{Binding IncluirControleExtra}"
-                                        OnColor="#16A34A"
-                                        ThumbColor="#FFFFFF"
-                                        VerticalOptions="Center" />
-                            </Grid>
-                        </Border>
-
-                        <!-- Extra 2: Headset Gamer Pro -->
-                        <Border Stroke="#E2E8F0"
-                                StrokeThickness="1"
-                                BackgroundColor="#F8FAFC"
-                                StrokeShape="RoundRectangle 8"
-                                Padding="10,8">
-                            <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10" VerticalOptions="Center">
-                                <Label Grid.Column="0"
-                                       Text="&#xf025;"
+                        <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                            <HorizontalStackLayout Grid.Column="0" Spacing="6" VerticalOptions="Center">
+                                <Label Text="&#xf7a9;"
                                        FontFamily="FontAwesomeSolid"
                                        FontSize="14"
                                        TextColor="#7E22CE"
                                        VerticalOptions="Center" />
-                                <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
-                                    <Label Text="Headset Gamer Pro c/ Microfone"
-                                           FontSize="12"
-                                           FontAttributes="Bold"
-                                           TextColor="#0F172A" />
-                                    <Label Text="Áudio 3D e chat de voz online (+ R$ 12,00)"
-                                           FontSize="10"
-                                           TextColor="#64748B" />
-                                </VerticalStackLayout>
-                                <Switch Grid.Column="2"
-                                        IsToggled="{Binding IncluirHeadsetGamer}"
-                                        OnColor="#16A34A"
-                                        ThumbColor="#FFFFFF"
-                                        VerticalOptions="Center" />
-                            </Grid>
-                        </Border>
-
-                        <!-- Extra 3: Pacote 2 Jogos Extras -->
-                        <Border Stroke="#E2E8F0"
-                                StrokeThickness="1"
-                                BackgroundColor="#F8FAFC"
-                                StrokeShape="RoundRectangle 8"
-                                Padding="10,8">
-                            <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10" VerticalOptions="Center">
-                                <Label Grid.Column="0"
-                                       Text="&#xf02d;"
-                                       FontFamily="FontAwesomeSolid"
+                                <Label Text="Serviços Opcionais Desta Locadora"
                                        FontSize="14"
-                                       TextColor="#D97706"
-                                       VerticalOptions="Center" />
-                                <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
-                                    <Label Text="Pacote 2 Jogos Físicos Adicionais"
-                                           FontSize="12"
-                                           FontAttributes="Bold"
-                                           TextColor="#0F172A" />
-                                    <Label Text="Escolha no catálogo na retirada (+ R$ 20,00)"
-                                           FontSize="10"
-                                           TextColor="#64748B" />
-                                </VerticalStackLayout>
-                                <Switch Grid.Column="2"
-                                        IsToggled="{Binding IncluirJogosExtras}"
-                                        OnColor="#16A34A"
-                                        ThumbColor="#FFFFFF"
-                                        VerticalOptions="Center" />
-                            </Grid>
-                        </Border>
+                                       FontAttributes="Bold"
+                                       TextColor="#0F172A" />
+                            </HorizontalStackLayout>
+                            <Border Grid.Column="1"
+                                    BackgroundColor="#F3E8FF"
+                                    StrokeShape="RoundRectangle 6"
+                                    Padding="6,2">
+                                <Label Text="{Binding Console.LocadoraNome}"
+                                       FontSize="9"
+                                       FontAttributes="Bold"
+                                       TextColor="#7E22CE" />
+                            </Border>
+                        </Grid>
 
-                        <!-- Extra 4: Seguro Proteção Acidental -->
-                        <Border Stroke="#E2E8F0"
-                                StrokeThickness="1"
-                                BackgroundColor="#F8FAFC"
-                                StrokeShape="RoundRectangle 8"
-                                Padding="10,8">
-                            <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10" VerticalOptions="Center">
-                                <Label Grid.Column="0"
-                                       Text="&#xf3ed;"
-                                       FontFamily="FontAwesomeSolid"
-                                       FontSize="14"
-                                       TextColor="#16A34A"
-                                       VerticalOptions="Center" />
-                                <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
-                                    <Label Text="Seguro Cobertura Total contra Quedas e Danos"
-                                           FontSize="12"
-                                           FontAttributes="Bold"
-                                           TextColor="#0F172A" />
-                                    <Label Text="Isenção completa de franquia de reparos (+ R$ 25,00)"
-                                           FontSize="10"
-                                           TextColor="#64748B" />
-                                </VerticalStackLayout>
-                                <Switch Grid.Column="2"
-                                        IsToggled="{Binding IncluirSeguroProtecao}"
-                                        OnColor="#16A34A"
-                                        ThumbColor="#FFFFFF"
-                                        VerticalOptions="Center" />
-                            </Grid>
-                        </Border>
+                        <Label Text="Acessórios e serviços adicionais configurados por esta unidade para o console:"
+                               FontSize="11"
+                               TextColor="#64748B" />
+
+                        <!-- Lista Dinâmica de Serviços Opcionais Cadastrados pela Locadora -->
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding ServicosOpcionaisDisponiveis}" Spacing="8">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="models:ServicoOpcional">
+                                    <Border Stroke="#E2E8F0"
+                                            StrokeThickness="1"
+                                            BackgroundColor="#F8FAFC"
+                                            StrokeShape="RoundRectangle 8"
+                                            Padding="10,8">
+                                        <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10" VerticalOptions="Center">
+                                            <Label Grid.Column="0"
+                                                   Text="{Binding IconeGlyph}"
+                                                   FontFamily="FontAwesomeSolid"
+                                                   FontSize="16"
+                                                   TextColor="#7E22CE"
+                                                   VerticalOptions="Center" />
+
+                                            <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
+                                                <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                                                    <Label Text="{Binding Nome}"
+                                                           FontSize="12"
+                                                           FontAttributes="Bold"
+                                                           TextColor="#0F172A" />
+                                                    <Label Text="{Binding ValorFormatado, StringFormat='(+{0})'}"
+                                                           FontSize="11"
+                                                           FontAttributes="Bold"
+                                                           TextColor="#16A34A" />
+                                                </HorizontalStackLayout>
+                                                <Label Text="{Binding Descricao}"
+                                                       FontSize="10"
+                                                       TextColor="#64748B" />
+                                            </VerticalStackLayout>
+
+                                            <Switch Grid.Column="2"
+                                                    IsToggled="{Binding Selecionado, Mode=TwoWay}"
+                                                    OnColor="#16A34A"
+                                                    ThumbColor="#FFFFFF"
+                                                    VerticalOptions="Center" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
                     </VerticalStackLayout>
                 </Border>
 
