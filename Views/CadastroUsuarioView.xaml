@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ProjetoFinalMVVM.ViewModels"
+             x:Class="ProjetoFinalMVVM.Views.CadastroUsuarioView"
+             x:DataType="vm:UsuarioViewModel"
+             Title="Novo Cadastro"
+             BackgroundColor="#F8FAFC">
+
+    <ScrollView>
+        <Grid Padding="24"
+              VerticalOptions="Center"
+              MaximumWidthRequest="500"
+              HorizontalOptions="Center">
+
+            <Border Stroke="#E2E8F0"
+                    StrokeThickness="1"
+                    BackgroundColor="#FFFFFF"
+                    StrokeShape="RoundRectangle 16"
+                    Padding="26">
+
+                <VerticalStackLayout Spacing="16">
+
+                    <!-- Título com Glyph FontAwesome -->
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="&#xf2c2;"
+                               FontFamily="FontAwesomeSolid"
+                               FontSize="20"
+                               TextColor="#16A34A"
+                               VerticalOptions="Center" />
+                        <Label Text="Cadastro de Usuário"
+                               FontSize="22"
+                               FontAttributes="Bold"
+                               TextColor="#16A34A" />
+                    </HorizontalStackLayout>
+
+                    <Label Text="Preencha os campos abaixo para criar sua conta no sistema."
+                           FontSize="13"
+                           TextColor="#64748B"
+                           Margin="0,-8,0,8" />
+
+                    <!-- Campo Nome -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Nome Completo"
+                               FontSize="13"
+                               FontAttributes="Bold"
+                               TextColor="#334155" />
+                        <Border Stroke="#CBD5E1"
+                                StrokeThickness="1"
+                                BackgroundColor="#F8FAFC"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="12,4">
+                            <Entry Text="{Binding Nome}"
+                                   Placeholder="ex: Gabriel Santos"
+                                   PlaceholderColor="#94A3B8"
+                                   TextColor="#0F172A" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Campo CPF -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="CPF"
+                               FontSize="13"
+                               FontAttributes="Bold"
+                               TextColor="#334155" />
+                        <Border Stroke="#CBD5E1"
+                                StrokeThickness="1"
+                                BackgroundColor="#F8FAFC"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="12,4">
+                            <Entry Text="{Binding Cpf}"
+                                   Placeholder="000.000.000-00"
+                                   PlaceholderColor="#94A3B8"
+                                   TextColor="#0F172A"
+                                   Keyboard="Numeric" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Campo E-mail -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="E-mail"
+                               FontSize="13"
+                               FontAttributes="Bold"
+                               TextColor="#334155" />
+                        <Border Stroke="#CBD5E1"
+                                StrokeThickness="1"
+                                BackgroundColor="#F8FAFC"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="12,4">
+                            <Entry Text="{Binding Email}"
+                                   Placeholder="seuemail@exemplo.com"
+                                   PlaceholderColor="#94A3B8"
+                                   TextColor="#0F172A"
+                                   Keyboard="Email" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Campo Senha -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Senha de Acesso"
+                               FontSize="13"
+                               FontAttributes="Bold"
+                               TextColor="#334155" />
+                        <Border Stroke="#CBD5E1"
+                                StrokeThickness="1"
+                                BackgroundColor="#F8FAFC"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="12,4">
+                            <Entry Text="{Binding Senha}"
+                                   Placeholder="Crie uma senha segura"
+                                   PlaceholderColor="#94A3B8"
+                                   TextColor="#0F172A"
+                                   IsPassword="True" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Picker Tipo de Usuário -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Tipo de Acesso (Perfil)"
+                               FontSize="13"
+                               FontAttributes="Bold"
+                               TextColor="#334155" />
+                        <Border Stroke="#CBD5E1"
+                                StrokeThickness="1"
+                                BackgroundColor="#F8FAFC"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="12,4">
+                            <Picker ItemsSource="{Binding TiposDisponiveis}"
+                                    SelectedItem="{Binding Tipo}"
+                                    TextColor="#0F172A"
+                                    Title="Selecione o Tipo de Usuário"
+                                    TitleColor="#94A3B8" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- DADOS DA LOCADORA (VISÍVEL APENAS QUANDO O PERFIL FOR LOCADORA) -->
+                    <Border Stroke="#C7D2FE"
+                            StrokeThickness="1.5"
+                            BackgroundColor="#F5F3FF"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="16"
+                            IsVisible="{Binding IsTipoLocadora}">
+                        <VerticalStackLayout Spacing="12">
+                            <HorizontalStackLayout Spacing="6">
+                                <Label Text="&#xf54f;"
+                                       FontFamily="FontAwesomeSolid"
+                                       FontSize="14"
+                                       TextColor="#4338CA"
+                                       VerticalOptions="Center" />
+                                <Label Text="Dados da Locadora / Filial"
+                                       FontSize="14"
+                                       FontAttributes="Bold"
+                                       TextColor="#4338CA" />
+                            </HorizontalStackLayout>
+                            <Label Text="Cadastre as informações da sua loja física para que os clientes encontrem seus consoles no catálogo:"
+                                   FontSize="11"
+                                   TextColor="#64748B" />
+
+                            <!-- Nome da Locadora / Fantasia -->
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="Nome da Locadora / Empresa"
+                                       FontSize="12"
+                                       FontAttributes="Bold"
+                                       TextColor="#334155" />
+                                <Border Stroke="#CBD5E1"
+                                        StrokeThickness="1"
+                                        BackgroundColor="#FFFFFF"
+                                        StrokeShape="RoundRectangle 8"
+                                        Padding="12,4">
+                                    <Entry Text="{Binding LocadoraNomeCadastro}"
+                                           Placeholder="Ex: GameZone Paulista"
+                                           PlaceholderColor="#94A3B8"
+                                           TextColor="#0F172A" />
+                                </Border>
+                            </VerticalStackLayout>
+
+                            <!-- Switch: Não tenho endereço / não sei, utiliza a localização atual -->
+                            <Border Stroke="#BAE6FD"
+                                    StrokeThickness="1"
+                                    BackgroundColor="#F0F9FF"
+                                    StrokeShape="RoundRectangle 10"
+                                    Padding="12,10">
+                                <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10" VerticalOptions="Center">
+                                    <Label Grid.Column="0"
+                                           Text="&#xf3c5;"
+                                           FontFamily="FontAwesomeSolid"
+                                           FontSize="16"
+                                           TextColor="#0284C7"
+                                           VerticalOptions="Center" />
+                                    <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                        <Label Text="Não tenho endereço / não sei, utiliza a localização atual"
+                                               FontSize="12"
+                                               FontAttributes="Bold"
+                                               TextColor="#0369A1" />
+                                        <Label Text="Preenche automaticamente CEP, Cidade, Estado e Rua a partir da localização atual"
+                                               FontSize="10"
+                                               TextColor="#0284C7" />
+                                    </VerticalStackLayout>
+                                    <Switch Grid.Column="2"
+                                            IsToggled="{Binding UsarLocalizacaoGpsAtual}"
+                                            OnColor="#16A34A"
+                                            ThumbColor="#FFFFFF"
+                                            VerticalOptions="Center" />
+                                </Grid>
+                            </Border>
+
+                            <!-- CAMPOS ESTRUTURADOS DE ENDEREÇO (SEMPRE VISÍVEIS) -->
+                            <VerticalStackLayout Spacing="10">
+
+                                <!-- CEP com Botão de Consulta Automática -->
+                                <VerticalStackLayout Spacing="4">
+                                    <HorizontalStackLayout Spacing="6">
+                                        <Label Text="&#xf002;"
+                                               FontFamily="FontAwesomeSolid"
+                                               FontSize="11"
+                                               TextColor="#0284C7"
+                                               VerticalOptions="Center" />
+                                        <Label Text="CEP (Preenche Cidade, Estado e Rua automaticamente)"
+                                               FontSize="12"
+                                               FontAttributes="Bold"
+                                               TextColor="#334155" />
+                                    </HorizontalStackLayout>
+                                    <Grid ColumnDefinitions="*, Auto" ColumnSpacing="8">
+                                        <Border Grid.Column="0"
+                                                Stroke="#CBD5E1"
+                                                StrokeThickness="1"
+                                                BackgroundColor="#FFFFFF"
+                                                StrokeShape="RoundRectangle 8"
+                                                Padding="12,4">
+                                            <Entry Text="{Binding LocadoraCepCadastro}"
+                                                   Placeholder="00000-000"
+                                                   PlaceholderColor="#94A3B8"
+                                                   TextColor="#0F172A"
+                                                   Keyboard="Numeric"
+                                                   MaxLength="9" />
+                                        </Border>
+                                        <Button Grid.Column="1"
+                                                Text="Buscar CEP"
+                                                Command="{Binding ConsultarCepCadastroCommand}"
+                                                BackgroundColor="#0284C7"
+                                                TextColor="#FFFFFF"
+                                                FontAttributes="Bold"
+                                                FontSize="11"
+                                                CornerRadius="8"
+                                                HeightRequest="38"
+                                                Padding="12,0" />
+                                    </Grid>
+                                </VerticalStackLayout>
+
+                                <!-- Rua / Logradouro (Preenchida a partir do CEP ou GPS) -->
+                                <VerticalStackLayout Spacing="4">
+                                    <Label Text="Rua / Logradouro (preenchida a partir do CEP ou GPS)"
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           TextColor="#334155" />
+                                    <Border Stroke="#CBD5E1"
+                                            StrokeThickness="1"
+                                            BackgroundColor="#FFFFFF"
+                                            StrokeShape="RoundRectangle 8"
+                                            Padding="12,4">
+                                        <Entry Text="{Binding LocadoraRuaCadastro}"
+                                               Placeholder="Ex: Av. Paulista"
+                                               PlaceholderColor="#94A3B8"
+                                               TextColor="#0F172A" />
+                                    </Border>
+                                </VerticalStackLayout>
+
+                                <!-- Número (Preencher manualmente) e Bairro -->
+                                <Grid ColumnDefinitions="*, *" ColumnSpacing="8">
+                                    <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                        <Label Text="Número (preencher manualmente)"
+                                               FontSize="12"
+                                               FontAttributes="Bold"
+                                               TextColor="#16A34A" />
+                                        <Border Stroke="#86EFAC"
+                                                StrokeThickness="1.5"
+                                                BackgroundColor="#FFFFFF"
+                                                StrokeShape="RoundRectangle 8"
+                                                Padding="12,4">
+                                            <Entry Text="{Binding LocadoraNumeroCadastro}"
+                                                   Placeholder="Ex: 1500"
+                                                   PlaceholderColor="#94A3B8"
+                                                   TextColor="#0F172A" />
+                                        </Border>
+                                    </VerticalStackLayout>
+
+                                    <VerticalStackLayout Grid.Column="1" Spacing="4">
+                                        <Label Text="Bairro"
+                                               FontSize="12"
+                                               FontAttributes="Bold"
+                                               TextColor="#334155" />
+                                        <Border Stroke="#CBD5E1"
+                                                StrokeThickness="1"
+                                                BackgroundColor="#FFFFFF"
+                                                StrokeShape="RoundRectangle 8"
+                                                Padding="12,4">
+                                            <Entry Text="{Binding LocadoraBairroCadastro}"
+                                                   Placeholder="Ex: Bela Vista"
+                                                   PlaceholderColor="#94A3B8"
+                                                   TextColor="#0F172A" />
+                                        </Border>
+                                    </VerticalStackLayout>
+                                </Grid>
+
+                                <!-- Cidade e Estado (UF) -->
+                                <Grid ColumnDefinitions="*, 90" ColumnSpacing="8">
+                                    <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                        <Label Text="Cidade (preenchida a partir do CEP ou GPS)"
+                                               FontSize="12"
+                                               FontAttributes="Bold"
+                                               TextColor="#334155" />
+                                        <Border Stroke="#CBD5E1"
+                                                StrokeThickness="1"
+                                                BackgroundColor="#FFFFFF"
+                                                StrokeShape="RoundRectangle 8"
+                                                Padding="12,4">
+                                            <Entry Text="{Binding LocadoraCidadeCadastro}"
+                                                   Placeholder="Ex: São Paulo"
+                                                   PlaceholderColor="#94A3B8"
+                                                   TextColor="#0F172A" />
+                                        </Border>
+                                    </VerticalStackLayout>
+
+                                    <VerticalStackLayout Grid.Column="1" Spacing="4">
+                                        <Label Text="Estado (UF)"
+                                               FontSize="12"
+                                               FontAttributes="Bold"
+                                               TextColor="#334155" />
+                                        <Border Stroke="#CBD5E1"
+                                                StrokeThickness="1"
+                                                BackgroundColor="#FFFFFF"
+                                                StrokeShape="RoundRectangle 8"
+                                                Padding="12,4">
+                                            <Entry Text="{Binding LocadoraEstadoCadastro}"
+                                                   Placeholder="SP"
+                                                   PlaceholderColor="#94A3B8"
+                                                   TextColor="#0F172A"
+                                                   MaxLength="2" />
+                                        </Border>
+                                    </VerticalStackLayout>
+                                </Grid>
+
+                            </VerticalStackLayout>
+
+                            <!-- Coordenadas GPS da Loja com Botão de Captura -->
+                            <VerticalStackLayout Spacing="6">
+                                <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                                    <HorizontalStackLayout Grid.Column="0" Spacing="6" VerticalOptions="Center">
+                                        <Label Text="&#xf124;"
+                                               FontFamily="FontAwesomeSolid"
+                                               FontSize="11"
+                                               TextColor="#7E22CE"
+                                               VerticalOptions="Center" />
+                                        <Label Text="Coordenadas GPS"
+                                               FontSize="12"
+                                               FontAttributes="Bold"
+                                               TextColor="#334155" />
+                                    </HorizontalStackLayout>
+
+                                    <!-- Botão Obter GPS Atual -->
+                                    <Button Grid.Column="1"
+                                            Text="Obter GPS Atual"
+                                            Command="{Binding PreencherGpsLocadoraCadastroCommand}"
+                                            BackgroundColor="#EDE9FE"
+                                            TextColor="#6D28D9"
+                                            BorderColor="#DDD6FE"
+                                            BorderWidth="1"
+                                            FontAttributes="Bold"
+                                            FontSize="11"
+                                            CornerRadius="6"
+                                            HeightRequest="30"
+                                            Padding="10,0" />
+                                </Grid>
+
+                                <Grid ColumnDefinitions="*, *" ColumnSpacing="8">
+                                    <Border Grid.Column="0"
+                                            Stroke="#CBD5E1"
+                                            StrokeThickness="1"
+                                            BackgroundColor="#FFFFFF"
+                                            StrokeShape="RoundRectangle 8"
+                                            Padding="10,4">
+                                        <Entry Text="{Binding LocadoraLatitudeCadastroTexto}"
+                                               Placeholder="Latitude"
+                                               PlaceholderColor="#94A3B8"
+                                               TextColor="#0F172A"
+                                               Keyboard="Numeric" />
+                                    </Border>
+
+                                    <Border Grid.Column="1"
+                                            Stroke="#CBD5E1"
+                                            StrokeThickness="1"
+                                            BackgroundColor="#FFFFFF"
+                                            StrokeShape="RoundRectangle 8"
+                                            Padding="10,4">
+                                        <Entry Text="{Binding LocadoraLongitudeCadastroTexto}"
+                                               Placeholder="Longitude"
+                                               PlaceholderColor="#94A3B8"
+                                               TextColor="#0F172A"
+                                               Keyboard="Numeric" />
+                                    </Border>
+                                </Grid>
+                            </VerticalStackLayout>
+
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Botão Salvar -->
+                    <Button Text="CONCLUIR CADASTRO"
+                            Command="{Binding SalvarCommand}"
+                            BackgroundColor="#16A34A"
+                            TextColor="#FFFFFF"
+                            FontAttributes="Bold"
+                            FontSize="15"
+                            CornerRadius="8"
+                            HeightRequest="48"
+                            Margin="0,10,0,0" />
+
+                    <!-- Botão Voltar -->
+                    <Button Text="Já tenho conta / Voltar ao Login"
+                            Command="{Binding VoltarCommand}"
+                            BackgroundColor="#FFFFFF"
+                            TextColor="#475569"
+                            FontSize="13"
+                            BorderColor="#CBD5E1"
+                            BorderWidth="1"
+                            CornerRadius="8"
+                            HeightRequest="44" />
+
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+    </ScrollView>
+
+</ContentPage>

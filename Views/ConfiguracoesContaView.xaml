@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ProjetoFinalMVVM.ViewModels"
+             x:Class="ProjetoFinalMVVM.Views.ConfiguracoesContaView"
+             x:DataType="vm:UsuarioViewModel"
+             Title="Configurações da Conta"
+             BackgroundColor="#F8FAFC">
+
+    <ScrollView>
+        <Grid Padding="20"
+              VerticalOptions="Center"
+              MaximumWidthRequest="500"
+              HorizontalOptions="Center">
+
+            <Border Stroke="#E2E8F0"
+                    StrokeThickness="1"
+                    BackgroundColor="#FFFFFF"
+                    StrokeShape="RoundRectangle 16"
+                    Padding="26">
+
+                <VerticalStackLayout Spacing="16">
+
+                    <!-- Cabeçalho com Glyph FontAwesome -->
+                    <Grid ColumnDefinitions="Auto, *" ColumnSpacing="12" VerticalOptions="Center">
+                        <Border Grid.Column="0"
+                                WidthRequest="44"
+                                HeightRequest="44"
+                                Stroke="#BAE6FD"
+                                StrokeThickness="1"
+                                BackgroundColor="#E0F2FE"
+                                StrokeShape="RoundRectangle 22">
+                            <Label Text="&#xf013;"
+                                   FontFamily="FontAwesomeSolid"
+                                   FontSize="20"
+                                   TextColor="#0284C7"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
+
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label Text="Configurações da Conta"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   TextColor="#0F172A" />
+                            <Label Text="Atualize seus dados pessoais e credenciais de acesso."
+                                   FontSize="12"
+                                   TextColor="#64748B" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" Color="#E2E8F0" />
+
+                    <!-- Perfil Atual Badge -->
+                    <Border BackgroundColor="#F1F5F9"
+                            Stroke="#CBD5E1"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 8"
+                            Padding="12,8">
+                        <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                            <Label Text="Perfil de Acesso:"
+                                   FontSize="12"
+                                   TextColor="#64748B"
+                                   VerticalOptions="Center" />
+                            <Border Grid.Column="1"
+                                    BackgroundColor="#DCFCE7"
+                                    Stroke="#86EFAC"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 6"
+                                    Padding="10,2">
+                                <Label Text="{Binding Tipo}"
+                                       FontSize="11"
+                                       FontAttributes="Bold"
+                                       TextColor="#15803D" />
+                            </Border>
+                        </Grid>
+                    </Border>
+
+                    <!-- Campo Nome -->
+                    <VerticalStackLayout Spacing="6">
+                        <HorizontalStackLayout Spacing="6">
+                            <Label Text="&#xf007;"
+                                   FontFamily="FontAwesomeSolid"
+                                   FontSize="12"
+                                   TextColor="#64748B"
+                                   VerticalOptions="Center" />
+                            <Label Text="Nome Completo"
+                                   FontSize="13"
+                                   FontAttributes="Bold"
+                                   TextColor="#334155" />
+                        </HorizontalStackLayout>
+                        <Border Stroke="#CBD5E1"
+                                StrokeThickness="1"
+                                BackgroundColor="#F8FAFC"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="12,4">
+                            <Entry Text="{Binding Nome}"
+                                   Placeholder="Seu nome"
+                                   PlaceholderColor="#94A3B8"
+                                   TextColor="#0F172A" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Campo CPF -->
+                    <VerticalStackLayout Spacing="6">
+                        <HorizontalStackLayout Spacing="6">
+                            <Label Text="&#xf2c2;"
+                                   FontFamily="FontAwesomeSolid"
+                                   FontSize="12"
+                                   TextColor="#64748B"
+                                   VerticalOptions="Center" />
+                            <Label Text="CPF"
+                                   FontSize="13"
+                                   FontAttributes="Bold"
+                                   TextColor="#334155" />
+                        </HorizontalStackLayout>
+                        <Border Stroke="#CBD5E1"
+                                StrokeThickness="1"
+                                BackgroundColor="#F8FAFC"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="12,4">
+                            <Entry Text="{Binding Cpf}"
+                                   Placeholder="000.000.000-00"
+                                   PlaceholderColor="#94A3B8"
+                                   TextColor="#0F172A"
+                                   Keyboard="Numeric" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Campo E-mail -->
+                    <VerticalStackLayout Spacing="6">
+                        <HorizontalStackLayout Spacing="6">
+                            <Label Text="&#xf0e0;"
+                                   FontFamily="FontAwesomeSolid"
+                                   FontSize="12"
+                                   TextColor="#64748B"
+                                   VerticalOptions="Center" />
+                            <Label Text="E-mail de Login"
+                                   FontSize="13"
+                                   FontAttributes="Bold"
+                                   TextColor="#334155" />
+                        </HorizontalStackLayout>
+                        <Border Stroke="#CBD5E1"
+                                StrokeThickness="1"
+                                BackgroundColor="#F8FAFC"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="12,4">
+                            <Entry Text="{Binding Email}"
+                                   Placeholder="seuemail@exemplo.com"
+                                   PlaceholderColor="#94A3B8"
+                                   TextColor="#0F172A"
+                                   Keyboard="Email" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Campo Nova Senha -->
+                    <VerticalStackLayout Spacing="6">
+                        <HorizontalStackLayout Spacing="6">
+                            <Label Text="&#xf023;"
+                                   FontFamily="FontAwesomeSolid"
+                                   FontSize="12"
+                                   TextColor="#64748B"
+                                   VerticalOptions="Center" />
+                            <Label Text="Nova Senha (deixe em branco para manter)"
+                                   FontSize="13"
+                                   FontAttributes="Bold"
+                                   TextColor="#334155" />
+                        </HorizontalStackLayout>
+                        <Border Stroke="#CBD5E1"
+                                StrokeThickness="1"
+                                BackgroundColor="#F8FAFC"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="12,4">
+                            <Entry Text="{Binding Senha}"
+                                   Placeholder="Digite nova senha se desejar alterar"
+                                   PlaceholderColor="#94A3B8"
+                                   TextColor="#0F172A"
+                                   IsPassword="True" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Botões de Ação -->
+                    <Grid ColumnDefinitions="*, *" ColumnSpacing="12" Margin="0,10,0,0">
+                        <Button Grid.Column="0"
+                                Text="Salvar Alterações"
+                                Command="{Binding SalvarConfiguracoesCommand}"
+                                BackgroundColor="#16A34A"
+                                TextColor="#FFFFFF"
+                                FontAttributes="Bold"
+                                FontSize="13"
+                                CornerRadius="8"
+                                HeightRequest="44" />
+
+                        <Button Grid.Column="1"
+                                Text="Voltar"
+                                Command="{Binding VoltarCommand}"
+                                BackgroundColor="#F1F5F9"
+                                TextColor="#475569"
+                                BorderColor="#CBD5E1"
+                                BorderWidth="1"
+                                FontSize="13"
+                                CornerRadius="8"
+                                HeightRequest="44" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+    </ScrollView>
+
+</ContentPage>

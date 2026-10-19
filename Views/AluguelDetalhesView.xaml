@@ -1,0 +1,644 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ProjetoFinalMVVM.ViewModels"
+             x:Class="ProjetoFinalMVVM.Views.AluguelDetalhesView"
+             x:DataType="vm:AluguelDetalhesViewModel"
+             Title="Configuração da Locação"
+             BackgroundColor="#F8FAFC">
+
+    <ScrollView>
+        <Grid Padding="16,14,16,24"
+              MaximumWidthRequest="600"
+              HorizontalOptions="Center">
+
+            <VerticalStackLayout Spacing="16">
+
+                <!-- 1. CABEÇALHO COM TÍTULO E BOTÃO VOLTAR -->
+                <Border Stroke="#E2E8F0"
+                        StrokeThickness="1"
+                        BackgroundColor="#FFFFFF"
+                        StrokeShape="RoundRectangle 14"
+                        Padding="14,12">
+                    <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                            <HorizontalStackLayout Spacing="8">
+                                <Label Text="&#xf11b;"
+                                       FontFamily="FontAwesomeSolid"
+                                       FontSize="16"
+                                       TextColor="#16A34A"
+                                       VerticalOptions="Center" />
+                                <Label Text="Configurar Aluguel"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       TextColor="#0F172A"
+                                       VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+                            <Label Text="Personalize o plano, serviços opcionais e logística de entrega"
+                                   FontSize="11"
+                                   TextColor="#64748B" />
+                        </VerticalStackLayout>
+
+                        <Button Grid.Column="1"
+                                Text="Voltar"
+                                Command="{Binding VoltarCommand}"
+                                BackgroundColor="#F1F5F9"
+                                TextColor="#475569"
+                                BorderColor="#CBD5E1"
+                                BorderWidth="1"
+                                FontSize="11"
+                                FontAttributes="Bold"
+                                CornerRadius="8"
+                                HeightRequest="34"
+                                Padding="12,0" />
+                    </Grid>
+                </Border>
+
+                <!-- 2. CARD DO CONSOLE SELECIONADO -->
+                <Border Stroke="#E2E8F0"
+                        StrokeThickness="1"
+                        BackgroundColor="#FFFFFF"
+                        StrokeShape="RoundRectangle 14"
+                        Padding="14">
+                    <Grid ColumnDefinitions="110, *" ColumnSpacing="14" VerticalOptions="Center">
+                        <!-- Imagem do Console -->
+                        <Border Grid.Column="0"
+                                HeightRequest="100"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 10"
+                                BackgroundColor="#F1F5F9">
+                            <Image Source="{Binding Console.ImgDiretorio}"
+                                   Aspect="AspectFit" />
+                        </Border>
+
+                        <!-- Informações Técnicas e Filial -->
+                        <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                            <Label Text="{Binding Console.Nome}"
+                                   FontSize="16"
+                                   FontAttributes="Bold"
+                                   TextColor="#0F172A" />
+
+                            <Border BackgroundColor="#E0F2FE"
+                                    Stroke="#BAE6FD"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 6"
+                                    Padding="6,3"
+                                    HorizontalOptions="Start">
+                                <HorizontalStackLayout Spacing="4">
+                                    <Label Text="&#xf54f;"
+                                           FontFamily="FontAwesomeSolid"
+                                           FontSize="10"
+                                           TextColor="#0284C7"
+                                           VerticalOptions="Center" />
+                                    <Label Text="{Binding Console.LocadoraNome}"
+                                           FontSize="10"
+                                           FontAttributes="Bold"
+                                           TextColor="#0284C7" />
+                                    <Label Text="•"
+                                           FontSize="10"
+                                           TextColor="#0284C7" />
+                                    <Label Text="{Binding Console.LocadoraDistanciaFormatada}"
+                                           FontSize="10"
+                                           TextColor="#0284C7" />
+                                </HorizontalStackLayout>
+                            </Border>
+
+                            <Label Text="{Binding Console.ChaveSerial, StringFormat='Serial: {0}'}"
+                                   FontSize="11"
+                                   TextColor="#94A3B8" />
+
+                            <Label Text="{Binding Console.Desc}"
+                                   FontSize="11"
+                                   TextColor="#64748B"
+                                   MaxLines="2"
+                                   LineBreakMode="TailTruncation" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
+
+                <!-- 3. MODALIDADES DE ALUGUEL DEFINIDAS PELA LOJA -->
+                <Border Stroke="#E2E8F0"
+                        StrokeThickness="1"
+                        BackgroundColor="#FFFFFF"
+                        StrokeShape="RoundRectangle 14"
+                        Padding="14">
+                    <VerticalStackLayout Spacing="10">
+                        <HorizontalStackLayout Spacing="6">
+                            <Label Text="&#xf155;"
+                                   FontFamily="FontAwesomeSolid"
+                                   FontSize="14"
+                                   TextColor="#16A34A"
+                                   VerticalOptions="Center" />
+                            <Label Text="Selecione o Plano da Loja"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="#0F172A" />
+                        </HorizontalStackLayout>
+
+                        <!-- Grade dos 3 Planos Disponíveis -->
+                        <Grid ColumnDefinitions="*, *, *" ColumnSpacing="8">
+
+                            <!-- Opção 1: Diária -->
+                            <Border Grid.Column="0"
+                                    Stroke="{Binding CorBordaDiaria}"
+                                    StrokeThickness="2"
+                                    BackgroundColor="{Binding CorFundoDiaria}"
+                                    StrokeShape="RoundRectangle 10"
+                                    Padding="8,10"
+                                    IsEnabled="{Binding PodeDiaria}"
+                                    Opacity="{Binding OpacidadeDiaria}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelecionarPlanoCommand}" CommandParameter="Diaria" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                    <Label Text="DIÁRIA"
+                                           FontSize="11"
+                                           FontAttributes="Bold"
+                                           TextColor="#475569"
+                                           HorizontalTextAlignment="Center" />
+                                    <Label Text="{Binding Console.ValorDiariaFormatado}"
+                                           FontSize="13"
+                                           FontAttributes="Bold"
+                                           TextColor="#16A34A"
+                                           HorizontalTextAlignment="Center" />
+                                    <Label Text="{Binding StatusDiariaTexto}"
+                                           FontSize="9"
+                                           TextColor="#64748B"
+                                           HorizontalTextAlignment="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <!-- Opção 2: Semanal -->
+                            <Border Grid.Column="1"
+                                    Stroke="{Binding CorBordaSemanal}"
+                                    StrokeThickness="2"
+                                    BackgroundColor="{Binding CorFundoSemanal}"
+                                    StrokeShape="RoundRectangle 10"
+                                    Padding="8,10"
+                                    IsEnabled="{Binding PodeSemanal}"
+                                    Opacity="{Binding OpacidadeSemanal}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelecionarPlanoCommand}" CommandParameter="Semanal" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                    <Label Text="SEMANAL"
+                                           FontSize="11"
+                                           FontAttributes="Bold"
+                                           TextColor="#475569"
+                                           HorizontalTextAlignment="Center" />
+                                    <Label Text="{Binding Console.ValorSemanalFormatado}"
+                                           FontSize="13"
+                                           FontAttributes="Bold"
+                                           TextColor="#16A34A"
+                                           HorizontalTextAlignment="Center" />
+                                    <Label Text="{Binding StatusSemanalTexto}"
+                                           FontSize="9"
+                                           TextColor="#64748B"
+                                           HorizontalTextAlignment="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <!-- Opção 3: Mensal -->
+                            <Border Grid.Column="2"
+                                    Stroke="{Binding CorBordaMensal}"
+                                    StrokeThickness="2"
+                                    BackgroundColor="{Binding CorFundoMensal}"
+                                    StrokeShape="RoundRectangle 10"
+                                    Padding="8,10"
+                                    IsEnabled="{Binding PodeMensal}"
+                                    Opacity="{Binding OpacidadeMensal}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelecionarPlanoCommand}" CommandParameter="Mensal" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                    <Label Text="MENSAL"
+                                           FontSize="11"
+                                           FontAttributes="Bold"
+                                           TextColor="#475569"
+                                           HorizontalTextAlignment="Center" />
+                                    <Label Text="{Binding Console.ValorMensalFormatado}"
+                                           FontSize="13"
+                                           FontAttributes="Bold"
+                                           TextColor="#16A34A"
+                                           HorizontalTextAlignment="Center" />
+                                    <Label Text="{Binding StatusMensalTexto}"
+                                           FontSize="9"
+                                           TextColor="#64748B"
+                                           HorizontalTextAlignment="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- 4. SELETOR DE QUANTIDADE / DURAÇÃO -->
+                <Border Stroke="#E2E8F0"
+                        StrokeThickness="1"
+                        BackgroundColor="#FFFFFF"
+                        StrokeShape="RoundRectangle 14"
+                        Padding="14">
+                    <VerticalStackLayout Spacing="12">
+                        <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                            <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                <Label Text="Quantidade do Período"
+                                       FontSize="14"
+                                       FontAttributes="Bold"
+                                       TextColor="#0F172A" />
+                                <Label Text="Defina quantos períodos você deseja reservar"
+                                       FontSize="11"
+                                       TextColor="#64748B" />
+                            </VerticalStackLayout>
+
+                            <!-- Stepper Customizado [-] [Qtd] [+] -->
+                            <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center">
+                                <Button Text="-"
+                                        Command="{Binding DiminuirPeriodoCommand}"
+                                        WidthRequest="36"
+                                        HeightRequest="36"
+                                        BackgroundColor="#F1F5F9"
+                                        TextColor="#0F172A"
+                                        FontSize="16"
+                                        FontAttributes="Bold"
+                                        CornerRadius="18"
+                                        Padding="0" />
+
+                                <Border BackgroundColor="#F8FAFC"
+                                        Stroke="#CBD5E1"
+                                        StrokeThickness="1"
+                                        StrokeShape="RoundRectangle 8"
+                                        Padding="14,4">
+                                    <HorizontalStackLayout Spacing="4">
+                                        <Label Text="{Binding QuantidadePeriodo}"
+                                               FontSize="15"
+                                               FontAttributes="Bold"
+                                               TextColor="#0F172A"
+                                               VerticalOptions="Center" />
+                                        <Label Text="{Binding TextoUnidadePeriodo}"
+                                               FontSize="13"
+                                               TextColor="#64748B"
+                                               VerticalOptions="Center" />
+                                    </HorizontalStackLayout>
+                                </Border>
+
+                                <Button Text="+"
+                                        Command="{Binding AumentarPeriodoCommand}"
+                                        WidthRequest="36"
+                                        HeightRequest="36"
+                                        BackgroundColor="#16A34A"
+                                        TextColor="#FFFFFF"
+                                        FontSize="16"
+                                        FontAttributes="Bold"
+                                        CornerRadius="18"
+                                        Padding="0" />
+                            </HorizontalStackLayout>
+                        </Grid>
+
+                        <!-- Box de Devolução Prevista -->
+                        <Border BackgroundColor="#F0FDF4"
+                                Stroke="#86EFAC"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="12,8">
+                            <Grid ColumnDefinitions="Auto, *" ColumnSpacing="8" VerticalOptions="Center">
+                                <Label Grid.Column="0"
+                                       Text="&#xf073;"
+                                       FontFamily="FontAwesomeSolid"
+                                       FontSize="14"
+                                       TextColor="#16A34A"
+                                       VerticalOptions="Center" />
+                                <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
+                                    <Label Text="Data Limite de Devolução:"
+                                           FontSize="10"
+                                           TextColor="#15803D" />
+                                    <Label Text="{Binding DataDevolucaoFormatada}"
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           TextColor="#166534" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- 5. PACOTES E SERVIÇOS ADICIONAIS -->
+                <Border Stroke="#E2E8F0"
+                        StrokeThickness="1"
+                        BackgroundColor="#FFFFFF"
+                        StrokeShape="RoundRectangle 14"
+                        Padding="14">
+                    <VerticalStackLayout Spacing="12">
+                        <HorizontalStackLayout Spacing="6">
+                            <Label Text="&#xf7a9;"
+                                   FontFamily="FontAwesomeSolid"
+                                   FontSize="14"
+                                   TextColor="#7E22CE"
+                                   VerticalOptions="Center" />
+                            <Label Text="Serviços e Acessórios Adicionais"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="#0F172A" />
+                        </HorizontalStackLayout>
+                        <Label Text="Escolha acessórios extras para melhorar sua experiência gamer:"
+                               FontSize="11"
+                               TextColor="#64748B" />
+
+                        <!-- Extra 1: Controle Extra Sem Fio -->
+                        <Border Stroke="#E2E8F0"
+                                StrokeThickness="1"
+                                BackgroundColor="#F8FAFC"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="10,8">
+                            <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10" VerticalOptions="Center">
+                                <Label Grid.Column="0"
+                                       Text="&#xf11b;"
+                                       FontFamily="FontAwesomeSolid"
+                                       FontSize="14"
+                                       TextColor="#0284C7"
+                                       VerticalOptions="Center" />
+                                <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
+                                    <Label Text="Controle Sem Fio Adicional"
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           TextColor="#0F172A" />
+                                    <Label Text="Para multiplayer local (+ R$ 15,00)"
+                                           FontSize="10"
+                                           TextColor="#64748B" />
+                                </VerticalStackLayout>
+                                <Switch Grid.Column="2"
+                                        IsToggled="{Binding IncluirControleExtra}"
+                                        OnColor="#16A34A"
+                                        ThumbColor="#FFFFFF"
+                                        VerticalOptions="Center" />
+                            </Grid>
+                        </Border>
+
+                        <!-- Extra 2: Headset Gamer Pro -->
+                        <Border Stroke="#E2E8F0"
+                                StrokeThickness="1"
+                                BackgroundColor="#F8FAFC"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="10,8">
+                            <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10" VerticalOptions="Center">
+                                <Label Grid.Column="0"
+                                       Text="&#xf025;"
+                                       FontFamily="FontAwesomeSolid"
+                                       FontSize="14"
+                                       TextColor="#7E22CE"
+                                       VerticalOptions="Center" />
+                                <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
+                                    <Label Text="Headset Gamer Pro c/ Microfone"
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           TextColor="#0F172A" />
+                                    <Label Text="Áudio 3D e chat de voz online (+ R$ 12,00)"
+                                           FontSize="10"
+                                           TextColor="#64748B" />
+                                </VerticalStackLayout>
+                                <Switch Grid.Column="2"
+                                        IsToggled="{Binding IncluirHeadsetGamer}"
+                                        OnColor="#16A34A"
+                                        ThumbColor="#FFFFFF"
+                                        VerticalOptions="Center" />
+                            </Grid>
+                        </Border>
+
+                        <!-- Extra 3: Pacote 2 Jogos Extras -->
+                        <Border Stroke="#E2E8F0"
+                                StrokeThickness="1"
+                                BackgroundColor="#F8FAFC"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="10,8">
+                            <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10" VerticalOptions="Center">
+                                <Label Grid.Column="0"
+                                       Text="&#xf02d;"
+                                       FontFamily="FontAwesomeSolid"
+                                       FontSize="14"
+                                       TextColor="#D97706"
+                                       VerticalOptions="Center" />
+                                <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
+                                    <Label Text="Pacote 2 Jogos Físicos Adicionais"
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           TextColor="#0F172A" />
+                                    <Label Text="Escolha no catálogo na retirada (+ R$ 20,00)"
+                                           FontSize="10"
+                                           TextColor="#64748B" />
+                                </VerticalStackLayout>
+                                <Switch Grid.Column="2"
+                                        IsToggled="{Binding IncluirJogosExtras}"
+                                        OnColor="#16A34A"
+                                        ThumbColor="#FFFFFF"
+                                        VerticalOptions="Center" />
+                            </Grid>
+                        </Border>
+
+                        <!-- Extra 4: Seguro Proteção Acidental -->
+                        <Border Stroke="#E2E8F0"
+                                StrokeThickness="1"
+                                BackgroundColor="#F8FAFC"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="10,8">
+                            <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10" VerticalOptions="Center">
+                                <Label Grid.Column="0"
+                                       Text="&#xf3ed;"
+                                       FontFamily="FontAwesomeSolid"
+                                       FontSize="14"
+                                       TextColor="#16A34A"
+                                       VerticalOptions="Center" />
+                                <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
+                                    <Label Text="Seguro Cobertura Total contra Quedas e Danos"
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           TextColor="#0F172A" />
+                                    <Label Text="Isenção completa de franquia de reparos (+ R$ 25,00)"
+                                           FontSize="10"
+                                           TextColor="#64748B" />
+                                </VerticalStackLayout>
+                                <Switch Grid.Column="2"
+                                        IsToggled="{Binding IncluirSeguroProtecao}"
+                                        OnColor="#16A34A"
+                                        ThumbColor="#FFFFFF"
+                                        VerticalOptions="Center" />
+                            </Grid>
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- 6. LOGÍSTICA DE ENTREGA -->
+                <Border Stroke="#E2E8F0"
+                        StrokeThickness="1"
+                        BackgroundColor="#FFFFFF"
+                        StrokeShape="RoundRectangle 14"
+                        Padding="14">
+                    <VerticalStackLayout Spacing="10">
+                        <HorizontalStackLayout Spacing="6">
+                            <Label Text="&#xf0d1;"
+                                   FontFamily="FontAwesomeSolid"
+                                   FontSize="14"
+                                   TextColor="#0284C7"
+                                   VerticalOptions="Center" />
+                            <Label Text="Forma de Entrega"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="#0F172A" />
+                        </HorizontalStackLayout>
+
+                        <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
+                            <!-- Opção 1: Retirada no Balcão -->
+                            <Border Grid.Column="0"
+                                    Stroke="{Binding CorBordaBalcao}"
+                                    StrokeThickness="2"
+                                    BackgroundColor="{Binding CorFundoBalcao}"
+                                    StrokeShape="RoundRectangle 10"
+                                    Padding="10,12">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelecionarEntregaCommand}" CommandParameter="Balcao" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                    <Label Text="&#xf54f;"
+                                           FontFamily="FontAwesomeSolid"
+                                           FontSize="18"
+                                           TextColor="#16A34A"
+                                           HorizontalOptions="Center" />
+                                    <Label Text="Retirada no Balcão"
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           TextColor="#0F172A"
+                                           HorizontalTextAlignment="Center" />
+                                    <Label Text="Grátis"
+                                           FontSize="11"
+                                           FontAttributes="Bold"
+                                           TextColor="#16A34A"
+                                           HorizontalTextAlignment="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <!-- Opção 2: Entrega em Domicílio -->
+                            <Border Grid.Column="1"
+                                    Stroke="{Binding CorBordaDomicilio}"
+                                    StrokeThickness="2"
+                                    BackgroundColor="{Binding CorFundoDomicilio}"
+                                    StrokeShape="RoundRectangle 10"
+                                    Padding="10,12">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelecionarEntregaCommand}" CommandParameter="Domicilio" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                    <Label Text="&#xf015;"
+                                           FontFamily="FontAwesomeSolid"
+                                           FontSize="18"
+                                           TextColor="#0284C7"
+                                           HorizontalOptions="Center" />
+                                    <Label Text="Entrega VIP em Casa"
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           TextColor="#0F172A"
+                                           HorizontalTextAlignment="Center" />
+                                    <Label Text="+ R$ 18,00"
+                                           FontSize="11"
+                                           FontAttributes="Bold"
+                                           TextColor="#0284C7"
+                                           HorizontalTextAlignment="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- 7. RESUMO FINANCEIRO TRANSPARENTE -->
+                <Border Stroke="#86EFAC"
+                        StrokeThickness="1"
+                        BackgroundColor="#FFFFFF"
+                        StrokeShape="RoundRectangle 14"
+                        Padding="16">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Resumo do Aluguel"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#0F172A" />
+
+                        <!-- Subtotal Plano -->
+                        <Grid ColumnDefinitions="*, Auto">
+                            <Label Grid.Column="0"
+                                   Text="{Binding ResumoPlanoTexto}"
+                                   FontSize="12"
+                                   TextColor="#64748B" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding SubtotalPlanoFormatado}"
+                                   FontSize="12"
+                                   TextColor="#0F172A" />
+                        </Grid>
+
+                        <!-- Subtotal Extras -->
+                        <Grid ColumnDefinitions="*, Auto">
+                            <Label Grid.Column="0"
+                                   Text="Acessórios e Serviços Extras"
+                                   FontSize="12"
+                                   TextColor="#64748B" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding SubtotalExtrasFormatado}"
+                                   FontSize="12"
+                                   TextColor="#0F172A" />
+                        </Grid>
+
+                        <!-- Logística -->
+                        <Grid ColumnDefinitions="*, Auto">
+                            <Label Grid.Column="0"
+                                   Text="Logística de Entrega"
+                                   FontSize="12"
+                                   TextColor="#64748B" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding TaxaEntregaFormatada}"
+                                   FontSize="12"
+                                   TextColor="#0F172A" />
+                        </Grid>
+
+                        <BoxView HeightRequest="1" Color="#E2E8F0" Margin="0,4" />
+
+                        <!-- Total Final -->
+                        <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                            <VerticalStackLayout Grid.Column="0" Spacing="1">
+                                <Label Text="TOTAL A PAGAR"
+                                       FontSize="12"
+                                       FontAttributes="Bold"
+                                       TextColor="#0F172A" />
+                                <Label Text="Sem cobranças ocultas"
+                                       FontSize="10"
+                                       TextColor="#64748B" />
+                            </VerticalStackLayout>
+                            <Label Grid.Column="1"
+                                   Text="{Binding TotalGeralFormatado}"
+                                   FontSize="22"
+                                   FontAttributes="Bold"
+                                   TextColor="#16A34A" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- 8. BOTÕES DE AÇÃO -->
+                <VerticalStackLayout Spacing="10" Margin="0,6,0,10">
+                    <Button Text="CONFIRMAR E FINALIZAR LOCAÇÃO"
+                            Command="{Binding ConfirmarLocacaoCommand}"
+                            BackgroundColor="#16A34A"
+                            TextColor="#FFFFFF"
+                            FontAttributes="Bold"
+                            FontSize="14"
+                            CornerRadius="10"
+                            HeightRequest="48" />
+
+                    <Button Text="Voltar ao Catálogo"
+                            Command="{Binding VoltarCommand}"
+                            BackgroundColor="#F1F5F9"
+                            TextColor="#475569"
+                            BorderColor="#CBD5E1"
+                            BorderWidth="1"
+                            FontSize="12"
+                            CornerRadius="10"
+                            HeightRequest="42" />
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
+
+</ContentPage>

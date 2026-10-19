@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ProjetoFinalMVVM.ViewModels"
+             x:Class="ProjetoFinalMVVM.Views.LoginView"
+             x:DataType="vm:UsuarioViewModel"
+             BackgroundColor="#F8FAFC"
+             NavigationPage.HasNavigationBar="False">
+
+    <ScrollView>
+        <Grid RowDefinitions="Auto, *"
+              Padding="24"
+              VerticalOptions="Center"
+              MaximumWidthRequest="460"
+              HorizontalOptions="Center">
+
+            <!-- CABEÇALHO AMIGÁVEL -->
+            <VerticalStackLayout Grid.Row="0"
+                                 Spacing="12"
+                                 HorizontalOptions="Center"
+                                 Margin="0,20,0,26">
+
+                <!-- Ícone / Emblema com glyph FontAwesome -->
+                <Border WidthRequest="76"
+                        HeightRequest="76"
+                        Stroke="#86EFAC"
+                        StrokeThickness="2"
+                        BackgroundColor="#DCFCE7"
+                        StrokeShape="RoundRectangle 38"
+                        HorizontalOptions="Center">
+                    <Label Text="&#xf11b;"
+                           FontFamily="FontAwesomeSolid"
+                           FontSize="34"
+                           TextColor="#16A34A"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+                </Border>
+
+                <Label Text="GAME RENTAL PRO"
+                       FontSize="26"
+                       FontAttributes="Bold"
+                       TextColor="#16A34A"
+                       HorizontalTextAlignment="Center" />
+
+                <Label Text="Locadora de Consoles de Videogame"
+                       FontSize="14"
+                       TextColor="#64748B"
+                       HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+
+            <!-- CARD DE LOGIN EM MODO CLARO -->
+            <Border Grid.Row="1"
+                    Stroke="#E2E8F0"
+                    StrokeThickness="1"
+                    BackgroundColor="#FFFFFF"
+                    StrokeShape="RoundRectangle 16"
+                    Padding="26">
+
+                <VerticalStackLayout Spacing="18">
+
+                    <Label Text="Acesse sua Conta"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="#0F172A" />
+
+                    <!-- Campo Email -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="E-mail"
+                               FontSize="13"
+                               FontAttributes="Bold"
+                               TextColor="#334155" />
+                        <Border Stroke="#CBD5E1"
+                                StrokeThickness="1"
+                                BackgroundColor="#F8FAFC"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="12,4">
+                            <Entry Text="{Binding Email}"
+                                   Placeholder="ex: admin@gamer.com"
+                                   PlaceholderColor="#94A3B8"
+                                   TextColor="#0F172A"
+                                   Keyboard="Email"
+                                   ClearButtonVisibility="WhileEditing" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Campo Senha -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Senha"
+                               FontSize="13"
+                               FontAttributes="Bold"
+                               TextColor="#334155" />
+                        <Border Stroke="#CBD5E1"
+                                StrokeThickness="1"
+                                BackgroundColor="#F8FAFC"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="12,4">
+                            <Entry Text="{Binding Senha}"
+                                   Placeholder="Digite sua senha"
+                                   PlaceholderColor="#94A3B8"
+                                   TextColor="#0F172A"
+                                   IsPassword="True" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Botão Entrar -->
+                    <Button Text="ENTRAR NO SISTEMA"
+                            Command="{Binding EntrarCommand}"
+                            BackgroundColor="#16A34A"
+                            TextColor="#FFFFFF"
+                            FontAttributes="Bold"
+                            FontSize="15"
+                            CornerRadius="8"
+                            HeightRequest="48"
+                            Margin="0,6,0,0" />
+
+                    <!-- Separador Visual -->
+                    <BoxView HeightRequest="1"
+                             Color="#E2E8F0"
+                             Margin="0,4" />
+
+                    <!-- Botão Registre-se -->
+                    <Button Text="Não tem uma conta? Cadastre-se"
+                            Command="{Binding IrParaCadastroCommand}"
+                            BackgroundColor="#FFFFFF"
+                            TextColor="#334155"
+                            FontSize="13"
+                            BorderColor="#CBD5E1"
+                            BorderWidth="1"
+                            CornerRadius="8"
+                            HeightRequest="44" />
+
+                    <!-- Painel Didático de Teste Rápido para o Professor -->
+                    <VerticalStackLayout Spacing="8" Margin="0,10,0,0">
+                        <Label Text="Atalhos Rápidos para Teste do Professor:"
+                               FontSize="11"
+                               TextColor="#64748B"
+                               HorizontalTextAlignment="Center" />
+                        <Grid ColumnDefinitions="*, *, *" ColumnSpacing="6">
+                            <Button Grid.Column="0"
+                                    Text="Admin"
+                                    Command="{Binding PreencherLoginTesteCommand}"
+                                    CommandParameter="Admin"
+                                    BackgroundColor="#E0F2FE"
+                                    TextColor="#0369A1"
+                                    BorderColor="#BAE6FD"
+                                    BorderWidth="1"
+                                    FontSize="11"
+                                    HeightRequest="36"
+                                    CornerRadius="6" />
+                            <Button Grid.Column="1"
+                                    Text="Locadora"
+                                    Command="{Binding PreencherLoginTesteCommand}"
+                                    CommandParameter="Locadora"
+                                    BackgroundColor="#E0E7FF"
+                                    TextColor="#4338CA"
+                                    BorderColor="#C7D2FE"
+                                    BorderWidth="1"
+                                    FontSize="11"
+                                    HeightRequest="36"
+                                    CornerRadius="6" />
+                            <Button Grid.Column="2"
+                                    Text="Cliente"
+                                    Command="{Binding PreencherLoginTesteCommand}"
+                                    CommandParameter="Cliente"
+                                    BackgroundColor="#DCFCE7"
+                                    TextColor="#15803D"
+                                    BorderColor="#86EFAC"
+                                    BorderWidth="1"
+                                    FontSize="11"
+                                    HeightRequest="36"
+                                    CornerRadius="6" />
+                        </Grid>
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+            </Border>
+
+        </Grid>
+    </ScrollView>
+
+</ContentPage>

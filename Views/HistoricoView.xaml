@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:ProjetoFinalMVVM.ViewModels"
+             xmlns:models="clr-namespace:ProjetoFinalMVVM.Models"
+             x:Class="ProjetoFinalMVVM.Views.HistoricoView"
+             x:DataType="vm:ItemViewModel"
+             Title="Histórico de Locações"
+             BackgroundColor="#F8FAFC">
+
+    <Grid RowDefinitions="Auto, *" Padding="16" RowSpacing="14">
+
+        <!-- CABEÇALHO EM MODO CLARO -->
+        <Border Grid.Row="0"
+                Stroke="#E2E8F0"
+                StrokeThickness="1"
+                BackgroundColor="#FFFFFF"
+                StrokeShape="RoundRectangle 16"
+                Padding="16,12">
+            <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                <VerticalStackLayout Grid.Column="0" Spacing="2">
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="&#xf1da;"
+                               FontFamily="FontAwesomeSolid"
+                               FontSize="16"
+                               TextColor="#16A34A"
+                               VerticalOptions="Center" />
+                        <Label Text="Histórico de Locações"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="#0F172A"
+                               VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                    <Label Text="Acompanhamento detalhado de retiradas, devoluções e valores"
+                           FontSize="11"
+                           TextColor="#64748B" />
+                </VerticalStackLayout>
+
+                <Button Grid.Column="1"
+                        Text="Voltar"
+                        Command="{Binding VoltarCommand}"
+                        BackgroundColor="#F1F5F9"
+                        TextColor="#475569"
+                        BorderColor="#CBD5E1"
+                        BorderWidth="1"
+                        FontSize="12"
+                        FontAttributes="Bold"
+                        CornerRadius="8"
+                        HeightRequest="36"
+                        Padding="14,0" />
+            </Grid>
+        </Border>
+
+        <!-- LISTA DETALHADA DO HISTÓRICO -->
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Historicos}">
+            <CollectionView.EmptyView>
+                <Border Stroke="#E2E8F0"
+                        StrokeThickness="1"
+                        BackgroundColor="#FFFFFF"
+                        StrokeShape="RoundRectangle 12"
+                        Padding="24"
+                        Margin="0,20">
+                    <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                        <Label Text="&#xf1da;"
+                               FontFamily="FontAwesomeSolid"
+                               FontSize="26"
+                               TextColor="#94A3B8"
+                               HorizontalOptions="Center" />
+                        <Label Text="Nenhum registro de locação encontrado."
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#64748B"
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="Quando você alugar um console, o histórico aparecerá aqui."
+                               FontSize="12"
+                               TextColor="#94A3B8"
+                               HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Historico">
+                    <Border Stroke="#E2E8F0"
+                            StrokeThickness="1"
+                            BackgroundColor="#FFFFFF"
+                            StrokeShape="RoundRectangle 14"
+                            Padding="16"
+                            Margin="0,0,0,12">
+                        <VerticalStackLayout Spacing="10">
+
+                            <!-- Cabeçalho do Card: ID, Data e Badge de Status -->
+                            <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                                <HorizontalStackLayout Grid.Column="0" Spacing="8">
+                                    <Label Text="{Binding Id, StringFormat='#LOC-{0:D4}'}"
+                                           FontSize="13"
+                                           FontAttributes="Bold"
+                                           TextColor="#0284C7" />
+                                    <Label Text="•" TextColor="#CBD5E1" />
+                                    <Label Text="{Binding DataHoraFormatada}"
+                                           FontSize="12"
+                                           TextColor="#64748B" />
+                                </HorizontalStackLayout>
+
+                                <!-- Badge de Status -->
+                                <Border Grid.Column="1"
+                                        BackgroundColor="{Binding StatusBadgeBg}"
+                                        StrokeShape="RoundRectangle 6"
+                                        Padding="8,2">
+                                    <Label Text="{Binding StatusLocacao}"
+                                           FontSize="10"
+                                           FontAttributes="Bold"
+                                           TextColor="{Binding StatusBadgeText}" />
+                                </Border>
+                            </Grid>
+
+                            <BoxView HeightRequest="1" Color="#F1F5F9" />
+
+                            <!-- Informações do Cliente e Console -->
+                            <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto" RowSpacing="6" ColumnSpacing="10">
+                                <!-- Cliente -->
+                                <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="1">
+                                    <Label Text="CLIENTE"
+                                           FontSize="9"
+                                           FontAttributes="Bold"
+                                           TextColor="#94A3B8" />
+                                    <Label Text="{Binding UsuarioNome}"
+                                           FontSize="13"
+                                           FontAttributes="Bold"
+                                           TextColor="#0F172A" />
+                                </VerticalStackLayout>
+
+                                <!-- Console & Serial -->
+                                <VerticalStackLayout Grid.Row="0" Grid.Column="1" Spacing="1">
+                                    <Label Text="CONSOLE / SERIAL"
+                                           FontSize="9"
+                                           FontAttributes="Bold"
+                                           TextColor="#94A3B8" />
+                                    <Label Text="{Binding ItemNome}"
+                                           FontSize="13"
+                                           FontAttributes="Bold"
+                                           TextColor="#16A34A" />
+                                    <Label Text="{Binding ChaveSerialConsole}"
+                                           FontSize="10"
+                                           TextColor="#64748B" />
+                                </VerticalStackLayout>
+
+                                <!-- Unidade / Locadora -->
+                                <VerticalStackLayout Grid.Row="1" Grid.Column="0" Spacing="1">
+                                    <Label Text="UNIDADE / FILIAL"
+                                           FontSize="9"
+                                           FontAttributes="Bold"
+                                           TextColor="#94A3B8" />
+                                    <Label Text="{Binding LocadoraNome}"
+                                           FontSize="12"
+                                           TextColor="#334155" />
+                                </VerticalStackLayout>
+
+                                <!-- Período e Devolução -->
+                                <VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="1">
+                                    <Label Text="DEVOLUÇÃO PREVISTA"
+                                           FontSize="9"
+                                           FontAttributes="Bold"
+                                           TextColor="#94A3B8" />
+                                    <HorizontalStackLayout Spacing="4">
+                                        <Label Text="{Binding DiasLocados, StringFormat='({0} dias)'}"
+                                               FontSize="11"
+                                               TextColor="#64748B" />
+                                        <Label Text="{Binding DataDevolucaoFormatada}"
+                                               FontSize="12"
+                                               FontAttributes="Bold"
+                                               TextColor="#D97706" />
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+                            </Grid>
+
+                            <BoxView HeightRequest="1" Color="#F1F5F9" />
+
+                            <!-- Rodapé Financeiro do Pedido -->
+                            <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                                <HorizontalStackLayout Grid.Column="0" Spacing="6" VerticalOptions="Center">
+                                    <Label Text="Taxas Extras:"
+                                           FontSize="11"
+                                           TextColor="#64748B" />
+                                    <Label Text="{Binding TaxaAdicionalFormatada}"
+                                           FontSize="11"
+                                           FontAttributes="Bold"
+                                           TextColor="#7E22CE" />
+                                </HorizontalStackLayout>
+
+                                <HorizontalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                                    <Label Text="Total:"
+                                           FontSize="12"
+                                           TextColor="#64748B"
+                                           VerticalOptions="Center" />
+                                    <Label Text="{Binding ValorTotalFormatado}"
+                                           FontSize="16"
+                                           FontAttributes="Bold"
+                                           TextColor="#16A34A"
+                                           VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                            </Grid>
+
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
+
+</ContentPage>
